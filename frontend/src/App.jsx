@@ -1,21 +1,18 @@
-import { useEffect, useState } from "react";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import necessary components from react-router-dom
+import Login from './Pages/Login/Login'; // Example component for Login page
+import Homepage from './Pages/Homepage/Homepage'; // Import your homepage component
 
-function App() {
-  const [message, setMessage] = useState("Loading...");
-
-  useEffect(() => {
-    fetch("http://localhost:5000")
-      .then((res) => res.text())
-      .then((data) => setMessage(data))
-      .catch((err) => console.error(err));
-  }, []);
-
+const App = () => {
   return (
-    <div>
-      <h1>Frontend (React)</h1>
-      <p>Backend says: {message}</p>
-    </div>
+    <Router> {/* Wrapping the routes inside Router */}
+      <Routes>
+        {/* Define the routes for your app */}
+        <Route path="/" element={<Login />} /> {/* Home page route */}
+        <Route path="/homepage" element={<Homepage />} /> {/* User's homepage route */}
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;

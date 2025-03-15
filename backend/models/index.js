@@ -1,6 +1,6 @@
 const mysql = require('mysql2');
-require('dotenv').config();
-
+const dotenv = require("dotenv");
+dotenv.config();
 // Create the database connection
 const db = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -19,4 +19,4 @@ db.connect((err) => {
 });
 
 
-module.exports = db.promise(); // Export the promise-based version
+module.exports = db.promise() // Export the promise-based version

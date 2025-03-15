@@ -10,6 +10,7 @@ export default [
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      process: 'readonly', // Add process as a global variable
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
@@ -20,6 +21,7 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
+    
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
