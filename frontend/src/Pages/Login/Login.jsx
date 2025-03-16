@@ -1,4 +1,5 @@
 import React from "react";
+import "./Login.css";
 
 const Login = () => {
   const handleGoogleLogin = () => {
@@ -6,9 +7,11 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login with Google</h2>
-      <button onClick={handleGoogleLogin}>Sign in with Google</button>
+      <button className="google-btn" onClick={handleGoogleLogin}>
+      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />        Sign in with Google
+      </button>
     </div>
   );
 };
