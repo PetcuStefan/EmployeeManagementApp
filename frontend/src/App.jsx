@@ -1,21 +1,15 @@
-import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./Pages/Login/Login";
+import Homepage from "./Pages/Homepage/Homepage";
 
 function App() {
-  const [message, setMessage] = useState("Loading...");
-
-  useEffect(() => {
-    fetch("http://localhost:5000")
-      .then((res) => res.text())
-      .then((data) => setMessage(data))
-      .catch((err) => console.error(err));
-  }, []);
-
   return (
-    <div>
-      <h1>Frontend (React)</h1>
-      <p>Backend says: {message}</p>
-    </div>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/homepage" element={<Homepage />} />
+    </Routes>
   );
 }
 
 export default App;
+
