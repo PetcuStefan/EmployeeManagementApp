@@ -1,62 +1,36 @@
 const express = require("express");
-const { OAuth2Client } = require("google-auth-library"); // Import Google OAuth client
-const dotenv = require("dotenv");
-const db = require("../models/index"); // Import database connection
-const jwt = require("jsonwebtoken");
-
-dotenv.config(); // Load environment variables
-
+const passport = require("passport");
 const router = express.Router();
 
-// ✅ Initialize Google OAuth Client
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+// Google Login Route
+router.get("/google", passport.authenticate("google", { 
+  scope: ["profile", "email"],
+  prompt: "select_account"  // Forces Google to ask for account selection
+}));
 
-// Google login route
-// Handle Google Login
-router.post("/google-login", async (req, res) => {
-    const { token } = req.body;
-  
-    try {
-      // Verify Google ID token
-      const ticket = await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-  
-      const payload = ticket.getPayload();
-      const email = payload.email;
-      const googleId = payload.sub;
-  
-      // Check if the user exists by email or Google ID
-      const [rows] = await db.execute(
-        'SELECT * FROM users WHERE email = ? OR googleId = ?',
-        [email, googleId]
-      );
-  
-      let user;
-      if (rows.length > 0) {
-        user = rows[0]; // User found
-      } else {
-        // Create a new user if not found (Google Login)
-        const [result] = await db.execute(
-          'INSERT INTO users (email, googleId) VALUES (?, ?)',
-          [email, googleId]
-        );
-        user = { id: result.insertId, email, googleId };
-      }
-  
-      // Generate JWT token
-      const authToken = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
-  
-      res.json({ success: true, token: authToken, user });
-    } catch (error) {
-      console.error("Error during Google login:", error);
-      res.status(400).json({ success: false, message: "Login failed" });
-    }
+// Google Callback Route
+router.get("/google/callback", passport.authenticate("google", {
+    failureRedirect: "/login",
+    successRedirect: "http://localhost:3000/homepage", // Redirect to frontend after login
+}));
+
+router.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) return res.status(500).send("Logout failed");
+
+    // Redirect to Google's logout URL
+    res.redirect("https://accounts.google.com/Logout");
   });
+});
+
+
+// Get Session User
+router.get("/user", (req, res) => {
+  if (req.user) {
+    res.json(req.user);
+  } else {
+    res.status(401).json({ message: "Not authenticated" });
+  }
+});
 
 module.exports = router;

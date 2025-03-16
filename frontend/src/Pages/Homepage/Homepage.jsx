@@ -1,64 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import for redirection
 
 const Homepage = () => {
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate(); // Hook for navigation
+
+  useEffect(() => {
+    fetch("http://localhost:5000/auth/user", { credentials: "include" })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.message === "Not authenticated") {
+          navigate("/"); // Redirect to login page if not logged in
+        } else {
+          setUser(data); // Set user data
+        }
+      })
+      .catch(() => navigate("/"));
+  }, [navigate]);
+
+  const handleLogout = () => {
+    window.open("http://localhost:5000/auth/logout", "_self");
+  };
+
   return (
-    <div className="homepage-container">
-      {/* Navigation Bar */}
-      <header className="navbar">
-        <nav>
-          <ul className="nav-links">
-            <li><a href="#home">Home</a></li>
-            <li><a href="#features">Features</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </nav>
-      </header>
-
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-content">
-          <h1>Welcome to Our Website</h1>
-          <p>Your gateway to amazing experiences.</p>
-          <a href="#features" className="cta-button">Learn More</a>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="features">
-        <div className="feature">
-          <h2>Feature One</h2>
-          <p>Discover how our first feature can make your life easier.</p>
-        </div>
-        <div className="feature">
-          <h2>Feature Two</h2>
-          <p>Learn more about our second powerful feature.</p>
-        </div>
-        <div className="feature">
-          <h2>Feature Three</h2>
-          <p>Experience the full potential of our third feature.</p>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="about">
-        <h2>About Us</h2>
-        <p>We are dedicated to bringing you the best user experience through our innovative products.</p>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="contact">
-        <h2>Contact Us</h2>
-        <p>If you have any questions or feedback, feel free to reach out!</p>
-        <a href="mailto:contact@example.com" className="cta-button">Email Us</a>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <p>&copy; 2025 Your Company. All rights reserved.</p>
-      </footer>
+    <div>
+      {user ? (
+        <>
+          <h2>Welcome, {user.displayName}</h2>
+          <button onClick={handleLogout}>Logout</button>
+        </>
+      ) : (
+        <h2>Loading...</h2>
+      )}
     </div>
   );
 };
 
 export default Homepage;
+
