@@ -21,11 +21,11 @@ passport.use(
         } else {
           // Insert new user
           const [result] = await db.query(
-            "INSERT INTO users (email, googleId) VALUES (?, ?)",
-            [profile.emails[0].value, profile.id]
+            "INSERT INTO users (email, googleId, displayName) VALUES (?, ?, ?)",
+            [profile.emails[0].value, profile.id, profile.displayName]
           );
 
-          const newUser = { id: result.insertId, email: profile.emails[0].value };
+          const newUser = { id: result.insertId, email: profile.emails[0].value, displayName: profile.displayName };
           return done(null, newUser);
         }
       } catch (err) {
