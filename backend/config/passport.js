@@ -1,6 +1,6 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const db = require("../models/index"); // Import MySQL connection
+const User = require("../models/users");  // ✅ Import the Sequelize User model
 
 passport.use(
   new GoogleStrategy(
@@ -11,40 +11,39 @@ passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Check if user exists in the 'users' table (not 'userdb')
-        const [user] = await db.query("SELECT * FROM users WHERE email = ?", [
-          profile.emails[0].value,
-        ]);
+        // Check if user exists
+        const user = await User.findOne({ where: { email: profile.emails[0].value } });
 
-        if (user.length > 0) {
-          return done(null, user[0]); // User exists, log them in
+        if (user) {
+          return done(null, user); // ✅ User exists
         } else {
           // Insert new user
-          const [result] = await db.query(
-            "INSERT INTO users (email, googleId, displayName) VALUES (?, ?, ?)",
-            [profile.emails[0].value, profile.id, profile.displayName]
-          );
+          const newUser = await User.create({
+            email: profile.emails[0].value,
+            googleId: profile.id,
+            displayName: profile.displayName,
+          });
 
-          const newUser = { id: result.insertId, email: profile.emails[0].value, displayName: profile.displayName };
           return done(null, newUser);
         }
       } catch (err) {
+        console.error("🔴 OAuth Error:", err);  // ✅ Logs detailed error info
         return done(err, null);
       }
     }
   )
 );
 
-// Serialize user
+// ✅ Serialize user (store user ID in session)
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.user_id);  // Use `user_id` from Sequelize model
 });
 
-// Deserialize user
+// ✅ Deserialize user (retrieve user from DB)
 passport.deserializeUser(async (id, done) => {
   try {
-    const [user] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
-    done(null, user[0]);
+    const user = await User.findByPk(id);  // Use Sequelize's `findByPk`
+    done(null, user);
   } catch (err) {
     done(err, null);
   }
