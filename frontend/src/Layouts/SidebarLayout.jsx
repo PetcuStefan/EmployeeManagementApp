@@ -1,17 +1,20 @@
-import React from 'react';
-import Sidebar from '../Components/Sidebar/Sidebar';
-import { Outlet } from 'react-router-dom';
-import './SidebarLayout.css';
+import React from "react";
+import Sidebar from "../Components/Sidebar/Sidebar";
+import { Outlet } from "react-router-dom";
+import "./SidebarLayout.css";
 
 const SidebarLayout = () => {
   return (
     <div className="layout-container">
-      <Sidebar />
+      <div className="sidebar-wrapper">
+        <Sidebar />
+      </div>
       <main className="main-content">
-        <Outlet /> {/* This is where nested route content renders */}
+        <Outlet />
       </main>
     </div>
   );
 };
 
 export default SidebarLayout;
+

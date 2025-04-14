@@ -1,41 +1,70 @@
+/* Sidebar is hidden by default */
 .sidebar {
-    width: 240px;
-    background-color: #1e1e2f;
-    color: white;
-    padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    animation: slideIn 0.4s ease forwards;
-    transform: translateX(-100%);
-    position: relative;
-    z-index: 10;
-  }
-  
-  .sidebar a {
-    display: block;
-    color: white;
-    text-decoration: none;
-    margin: 15px 0;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-  
-  .sidebar a:hover {
-    color: #7dd3fc;
-  }
-  
-  .logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    margin-bottom: 30px;
-  }
-  
-  @keyframes slideIn {
-    to {
-      transform: translateX(0);
-    }
-  }
-  
-  .slide-in {
-    transform: translateX(0);
-  }
-  
+  width: 240px;
+  background-color: #1e1e2f;
+  color: white;
+  padding: 20px;
+  height: 100vh;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.sidebar-wrapper:hover .sidebar {
+  transform: translateX(0);
+}
+
+/* Hover zone */
+.sidebar-wrapper {
+  position: relative;
+  width: 40px; /* small hover zone on the side */
+  height: 100vh;
+}
+
+.sidebar-wrapper:hover {
+  width: 240px;
+}
+
+/* Links */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  margin: 15px 0;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #7dd3fc;
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.logout-btn {
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}

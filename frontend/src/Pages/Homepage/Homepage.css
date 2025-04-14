@@ -1,0 +1,14 @@
+.homepage-container {
+    padding: 20px;
+    background-color: #f3f4f6; /* light gray */
+    min-height: 100vh;
+    color: #1f2937; /* dark text */
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .welcome-text {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #111827;
+  }
+  
