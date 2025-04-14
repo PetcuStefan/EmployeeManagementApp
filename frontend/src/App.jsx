@@ -1,12 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import Login from "./Pages/Login/Login";
 import Homepage from "./Pages/Homepage/Homepage";
+import SidebarLayout from "./Layouts/SidebarLayout";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
+      <Route element={<SidebarLayout/>}>
       <Route path="/homepage" element={<Homepage />} />
+      </Route>
     </Routes>
   );
 }

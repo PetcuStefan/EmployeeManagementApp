@@ -1,0 +1,41 @@
+.sidebar {
+    width: 240px;
+    background-color: #1e1e2f;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.4s ease forwards;
+    transform: translateX(-100%);
+    position: relative;
+    z-index: 10;
+  }
+  
+  .sidebar a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    margin: 15px 0;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .sidebar a:hover {
+    color: #7dd3fc;
+  }
+  
+  .logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  
+  @keyframes slideIn {
+    to {
+      transform: translateX(0);
+    }
+  }
+  
+  .slide-in {
+    transform: translateX(0);
+  }
+  
