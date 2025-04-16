@@ -47,4 +47,34 @@ router.post('/addCompany', async (req, res) => {
   }
 });
 
+router.get('/myCompanies', async (req, res) => {
+  try {
+    console.log("Session data:", req.session); // Log session data
+
+    // Access googleId from passport session
+    const googleId = req.session.passport?.user;
+    console.log("googleId from session:", googleId);
+
+    if (!googleId) {
+      console.error("No googleId found in session");
+      return res.status(400).json({ message: "User not authenticated!" });
+    }
+
+    // Proceed with fetching companies if googleId exists
+    const companies = await Company.findAll({
+      where: { googleId: googleId },
+    });
+
+    if (!companies || companies.length === 0) {
+      return res.status(404).json({ message: "No companies found for this user!" });
+    }
+
+    return res.status(200).json(companies);
+  } catch (error) {
+    console.error("Error fetching companies:", error);
+    return res.status(500).json({ message: "Error fetching companies" });
+  }
+});
+
+
 module.exports = router;
