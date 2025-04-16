@@ -20,7 +20,7 @@ app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
   })
 );
 app.use(passport.initialize());
@@ -28,6 +28,7 @@ app.use(passport.session());
 
 // Routes
 app.use("/auth", require("./routes/authRoutes"));
+app.use("/api/companies", require("./routes/companiesRoutes"));
 
 app.listen(5000, () => console.log("Server running on port 5000"));
 

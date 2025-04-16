@@ -1,0 +1,50 @@
+const express = require("express");
+const router = express.Router();
+const Company= require("../models/companies");
+const User=require("../models/users");
+
+router.post('/addCompany', async (req, res) => {
+  console.log("➡️ POST /addCompany hit");
+
+  const { name } = req.body;
+  const googleId = req.user?.googleId;
+
+  console.log("📦 Request Body:", req.body);
+  console.log("👤 googleId from session:", googleId);
+
+  if (!googleId || !name) {
+    console.warn("❌ Missing googleId or company name");
+    return res.status(400).json({ message: 'Missing googleId or name' });
+  }
+
+  try {
+    // Check if user exists
+    const user = await User.findOne({ where: { googleId } });
+    console.log("🔍 User lookup result:", user);
+
+    if (!user) {
+      console.warn("❌ No user found with that googleId");
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Create the new company
+    const newCompany = await Company.create({
+      googleId: user.googleId, // or user.googleId depending on your DB
+      name,
+      start_date: new Date(),
+    });
+
+    console.log("✅ Company created:", newCompany);
+
+    res.status(201).json({
+      message: 'Company created successfully',
+      company: newCompany,
+    });
+
+  } catch (error) {
+    console.error("🔥 Error creating company:", error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+});
+
+module.exports = router;

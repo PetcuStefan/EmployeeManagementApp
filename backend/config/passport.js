@@ -36,7 +36,7 @@ passport.use(
 
 // ✅ Serialize user (store user ID in session)
 passport.serializeUser((user, done) => {
-  done(null, user.user_id);  // Use `user_id` from Sequelize model
+  done(null, user.googleId);  // Use `user_id` from Sequelize model
 });
 
 // ✅ Deserialize user (retrieve user from DB)
