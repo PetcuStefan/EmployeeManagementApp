@@ -4,13 +4,8 @@ const Company= require("../models/companies");
 const User=require("../models/users");
 
 router.post('/addCompany', async (req, res) => {
-  console.log("➡️ POST /addCompany hit");
-
   const { name } = req.body;
   const googleId = req.user?.googleId;
-
-  console.log("📦 Request Body:", req.body);
-  console.log("👤 googleId from session:", googleId);
 
   if (!googleId || !name) {
     console.warn("❌ Missing googleId or company name");
@@ -20,7 +15,6 @@ router.post('/addCompany', async (req, res) => {
   try {
     // Check if user exists
     const user = await User.findOne({ where: { googleId } });
-    console.log("🔍 User lookup result:", user);
 
     if (!user) {
       console.warn("❌ No user found with that googleId");
@@ -33,8 +27,6 @@ router.post('/addCompany', async (req, res) => {
       name,
       start_date: new Date(),
     });
-
-    console.log("✅ Company created:", newCompany);
 
     res.status(201).json({
       message: 'Company created successfully',
@@ -53,7 +45,6 @@ router.get('/myCompanies', async (req, res) => {
 
     // Access googleId from passport session
     const googleId = req.session.passport?.user;
-    console.log("googleId from session:", googleId);
 
     if (!googleId) {
       console.error("No googleId found in session");

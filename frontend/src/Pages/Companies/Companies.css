@@ -61,7 +61,7 @@
     background-color: #4CAF50;
     color: white;
     cursor: pointer;
-    width: 48%; /* Set width of buttons to 48% */
+    width: 15%; /* Set width of buttons to 48% */
     padding: 8px; /* Smaller padding for smaller buttons */
     font-size: 16px; /* Keep the text size the same */
     margin: 20px 0; /* Vertical margin to create space between buttons */
@@ -86,6 +86,16 @@
     border: 1px solid #ccc;
     padding: 10px;
     font-size: 16px;
+  }
+
+  .modal-button{
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    width: 48%; /* Set width of buttons to 48% */
+    padding: 8px; /* Smaller padding for smaller buttons */
+    font-size: 16px; /* Keep the text size the same */
+    margin: 20px 0; /* Vertical margin to create space between buttons */
   }
   
   /* Sidebar styles - assuming you have a sidebar */

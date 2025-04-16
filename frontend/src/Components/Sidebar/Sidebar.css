@@ -59,6 +59,7 @@
   background-color: #ef4444;
   color: white;
   border: none;
+  width: 90%; /* Set width of buttons to 48% */
   border-radius: 5px;
   cursor: pointer;
   font-weight: 500;

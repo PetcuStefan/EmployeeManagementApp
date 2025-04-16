@@ -118,8 +118,8 @@ const Companies = ({ userId }) => {
           required
         />
         <div className="modal-buttons">
-          <button type="submit">Submit</button>
-          <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
+          <button type="submit" className='modal-button'>Submit</button>
+          <button type="button" className='modal-button' onClick={() => setShowModal(false)}>Cancel</button>
         </div>
       </form>
     </div>
