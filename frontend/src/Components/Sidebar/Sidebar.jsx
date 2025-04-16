@@ -12,6 +12,8 @@ const Sidebar = () => {
       <h2 className="logo">MyApp</h2>
       <nav className="nav-links">
         <Link to="/homepage">Homepage</Link>
+        <Link to="/companies">My Organizations</Link>
+        <Link to="/stats">Stats</Link>
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
