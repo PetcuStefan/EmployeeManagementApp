@@ -1,50 +1,67 @@
 /* Center the login container */
 .login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background-color: #f8f9fa;
-    font-family: Arial, sans-serif;
-  }
-  
-  /* Style the heading */
-  .login-container h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-  }
-  
-  /* Google Sign-In Button */
-  .google-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #fff;
-    color: #757575;
-    border: 1px solid #dadce0;
-    padding: 10px 1px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .google-btn img {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-  }
-  
-  /* Hover effect */
-  .google-btn:hover {
-    background-color: #f1f3f4;
-  }
-  
-  /* Active effect */
-  .google-btn:active {
-    background-color: #e8eaed;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+@font-face {
+  font-family: 'JetBrainsMono';
+  src: url('../../Assets/ttf/JetBrainsMono-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Heading Styling */
+.login-container h2 {
+  font-family: 'JetBrainsMono', monospace;
+  font-size: 30px;
+  color: #d7d7d7; /* Match your yellow theme */
+  text-shadow: 2px 2px 4px #000; /* Subtle dark shadow for depth */
+  letter-spacing: 1.5px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Google Button */
+.google-btn {
+  font-family: 'JetBrainsMono', monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000; /* Deep black for that hacker vibe */
+  color: #ffffff; /* Match your yellow theme */
+  border: 2px solid #ffffff;
+  padding: 14px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s ease;
+  width: 260px;
+  text-transform: uppercase;
+}
+
+/* Hover */
+.google-btn:hover {
+  background-color: #ffffff;
+  color: #000;
+  border-color: #000;
+}
+
+/* Google logo inside button */
+.google-btn img {
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  filter: invert(100%); /* Makes the Google logo white to match dark bg */
+  transition: filter 0.25s ease;
+}
+
+.google-btn:hover img {
+  filter: invert(0%); /* Goes back to color on hover (black text) */
+}
