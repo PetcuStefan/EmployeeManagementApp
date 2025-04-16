@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './Companies.css';
 
 const Companies = ({ userId }) => {
   const [showModal, setShowModal] = useState(false);
@@ -6,6 +7,11 @@ const Companies = ({ userId }) => {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  // Toggle sidebar visibility
+  const toggleSidebar = () => {
+  setIsSidebarOpen(!isSidebarOpen);
+  };
 
   // Fetch companies when the component mounts
   useEffect(() => {
@@ -75,94 +81,52 @@ const Companies = ({ userId }) => {
   };
 
   return (
-    <div>
+    <div className={isSidebarOpen ? "content" : "sidebar-closed content"}>
       <h1>Your Companies</h1>
 
-      {loading ? (
-        <p>Loading your companies...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : (
-        <div style={companiesStyles.container}>
-          {companies.length === 0 ? (
-            <p>No companies found. Please add one!</p>
-          ) : (
-            companies.map((company) => (
-              <div key={company.company_id} style={cardStyles.card}>
-                <h3>{company.name}</h3>
-                <p>Created on: {new Date(company.createdAt).toLocaleDateString()}</p>
-              </div>
-            ))
-          )}
+{loading ? (
+  <p>Loading your companies...</p>
+) : error ? (
+  <p>{error}</p>
+) : (
+  <div className="companies-container">
+    {companies.length === 0 ? (
+      <p>No companies found. Please add one!</p>
+    ) : (
+      companies.map((company) => (
+        <div key={company.company_id} className="company-card">
+          <h3>{company.name}</h3>
+          <p>Created on: {new Date(company.createdAt).toLocaleDateString()}</p>
         </div>
-      )}
+      ))
+    )}
+  </div>
+)}
 
-      <button onClick={() => setShowModal(true)}>Add Company</button>
+<button onClick={() => setShowModal(true)}>Add Company</button>
 
-      {showModal && (
-        <div style={modalStyles.overlay}>
-          <div style={modalStyles.modal}>
-            <h2>Add Company</h2>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Company Name"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-              />
-              <br />
-              <button type="submit">Submit</button>
-              <button type="button" onClick={() => setShowModal(false)}>
-                Cancel
-              </button>
-            </form>
-          </div>
+{showModal && (
+  <div className="modal-overlay">
+    <div className="modal">
+      <h2>Add Company</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Company Name"
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
+          required
+        />
+        <div className="modal-buttons">
+          <button type="submit">Submit</button>
+          <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
         </div>
-      )}
+      </form>
+    </div>
+  </div>
+)}
     </div>
   );
-};
-
-// Styling for the cards and the layout
-const companiesStyles = {
-  container: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-    gap: '20px',
-    padding: '20px',
-  },
-};
-
-const cardStyles = {
-  card: {
-    backgroundColor: '#fff',
-    padding: '15px',
-    borderRadius: '8px',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    textAlign: 'center',
-  },
-};
-
-// Modal styles for adding a company
-const modalStyles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100vw',
-    height: '100vh',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modal: {
-    backgroundColor: '#fff',
-    padding: '20px',
-    borderRadius: '8px',
-    minWidth: '300px',
-  },
 };
 
 export default Companies;

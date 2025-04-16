@@ -1,0 +1,116 @@
+/* Container for displaying companies */
+.companies-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out; /* Smooth transition when sidebar is opened */
+  }
+  
+  /* Individual company card */
+  .company-card {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Modal overlay */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Modal itself */
+  .modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Increased gap between input fields and buttons */
+  }
+  
+  /* Add some styling to the input fields and buttons */
+  button, input {
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+  }
+  
+  /* Buttons container - flexbox to align them horizontally */
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between; /* Make buttons spread across */
+    gap: 10px; /* Space between buttons */
+    width: 100%; /* Ensure the buttons take the full width */
+  }
+  
+  /* Styling for the modal buttons */
+  button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    width: 48%; /* Set width of buttons to 48% */
+    padding: 8px; /* Smaller padding for smaller buttons */
+    font-size: 16px; /* Keep the text size the same */
+    margin: 20px 0; /* Vertical margin to create space between buttons */
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  button[type="button"] {
+    background-color: #f44336;
+  }
+  
+  button[type="button"]:hover {
+    background-color: #e53935;
+  }
+  
+  /* Input field styling */
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  /* Sidebar styles - assuming you have a sidebar */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    z-index: 10; /* Make sure it's above content */
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Content area that moves to the right when sidebar is open */
+  .content {
+    margin-left: 250px; /* Make space for the sidebar */
+    padding: 20px;
+    transition: margin-left 0.3s ease-in-out; /* Smooth transition */
+  }
+  
+  /* When sidebar is closed, remove the margin */
+  .sidebar-closed .content {
+    margin-left: 0;
+  }
+  
