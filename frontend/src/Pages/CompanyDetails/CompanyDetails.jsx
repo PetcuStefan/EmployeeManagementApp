@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import './CompanyDetails.css';
 
 const CompanyDetails = () => {
   const { id } = useParams(); // Company ID from URL
+  const navigate = useNavigate(); // Use navigate for redirecting in React Router v6
   const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,6 +61,26 @@ const CompanyDetails = () => {
     }
   };
 
+  const handleDeleteCompany = async () => {
+    if (window.confirm('Are you sure you want to delete this company? This action is permanent.')) {
+      try {
+        const res = await fetch(`http://localhost:5000/api/CompanyDetails/DeleteCompany/${id}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        });
+
+        if (!res.ok) throw new Error('Failed to delete company');
+
+        alert('Company deleted successfully');
+        navigate('/companies'); // Redirect to the companies list (or homepage)
+      } catch (err) {
+        console.error(err);
+        alert('Failed to delete company');
+      }
+    }
+  };
+
   if (loading) return <p>Loading company details...</p>;
   if (error) return <p>{error}</p>;
   if (!company) return <p>Company not found</p>;
@@ -70,7 +91,7 @@ const CompanyDetails = () => {
       <p><strong>Start Date:</strong> {new Date(company.start_date).toLocaleDateString()}</p>
       <p><strong>Created At:</strong> {new Date(company.createdAt).toLocaleString()}</p>
       <p><strong>Google ID:</strong> {company.googleId}</p>
-  
+
       <h2>Departments</h2>
       {company.Departments && company.Departments.length > 0 ? (
         <ul className="departments-list">
@@ -81,9 +102,9 @@ const CompanyDetails = () => {
       ) : (
         <p>No departments found for this company.</p>
       )}
-  
+
       <button onClick={() => setShowForm(true)}>Add Department</button>
-  
+
       {/* Modal */}
       {showForm && (
         <div className="modal-overlay">
@@ -109,6 +130,11 @@ const CompanyDetails = () => {
           </div>
         </div>
       )}
+
+      {/* Delete Company Button */}
+      <button onClick={handleDeleteCompany} style={{ marginTop: '1rem', backgroundColor: 'red', color: 'white' }}>
+        Delete Company
+      </button>
     </div>
   );
 };

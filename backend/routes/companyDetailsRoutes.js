@@ -46,4 +46,22 @@ router.post("/:id/addDepartment", async (req, res) => {
   }
 });
 
+router.delete('/DeleteCompany/:id', async (req, res) => {
+  try {
+    const companyId = req.params.id;
+    const company = await Company.findByPk(companyId);
+
+    if (!company) {
+      return res.status(404).json({ message: 'Company not found' });
+    }
+
+    // Deleting the company
+    await company.destroy();
+    res.status(200).json({ message: 'Company deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

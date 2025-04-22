@@ -26,4 +26,28 @@
     gap: 1rem;
     margin-top: 1rem;
   }
+  button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+  }
   
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  button:disabled {
+    background-color: gray;
+  }
+  
+  button[style*="background-color: red"] {
+    background-color: red;
+  }
+  
+  button[style*="background-color: red"]:hover {
+    opacity: 0.8;
+  }
