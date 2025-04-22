@@ -1,20 +1,35 @@
 /* Container for displaying companies */
 .companies-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    transition: margin-left 0.3s ease-in-out; /* Smooth transition when sidebar is opened */
-  }
-  
-  /* Individual company card */
-  .company-card {
-    background-color: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  transition: margin-left 0.3s ease-in-out; /* Smooth transition when sidebar is opened */
+}
+
+/* Individual company card */
+.company-card {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s; /* Added transition for hover effect */
+}
+
+/* Hover effect for company card */
+.company-card:hover {
+  transform: scale(1.05); /* Slightly enlarge the card */
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Increase the shadow for depth */
+  background-color: #4CAF50; /* Change background color on hover */
+  cursor: pointer; /* Indicate the card is clickable */
+}
+
+/* Optional: Hover effect for company card text */
+.company-card:hover h3, .company-card:hover p {
+  color: white; /* Change text color to green on hover */
+}
+
   
   /* Modal overlay */
   .modal-overlay {

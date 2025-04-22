@@ -87,55 +87,59 @@ const CompanyDetails = () => {
 
   return (
     <div className="company-details-container">
-      <h1>{company.name}</h1>
-      <p><strong>Start Date:</strong> {new Date(company.start_date).toLocaleDateString()}</p>
-      <p><strong>Created At:</strong> {new Date(company.createdAt).toLocaleString()}</p>
-      <p><strong>Google ID:</strong> {company.googleId}</p>
+    <h1>{company.name}</h1>
+    <p><strong>Start Date:</strong> {new Date(company.start_date).toLocaleDateString()}</p>
+    <p><strong>Created At:</strong> {new Date(company.createdAt).toLocaleString()}</p>
+    <p><strong>Google ID:</strong> {company.googleId}</p>
 
-      <h2>Departments</h2>
-      {company.Departments && company.Departments.length > 0 ? (
+    <h2>Departments</h2>
+    {company.Departments && company.Departments.length > 0 ? (
         <ul className="departments-list">
-          {company.Departments.map((dept) => (
-            <li key={dept.department_id}>{dept.name}</li>
-          ))}
+            {company.Departments.map((dept) => (
+                <li key={dept.department_id}>{dept.name}</li>
+            ))}
         </ul>
-      ) : (
+    ) : (
         <p>No departments found for this company.</p>
-      )}
-
-      <button onClick={() => setShowForm(true)}>Add Department</button>
-
-      {/* Modal */}
-      {showForm && (
+    )}
+    
+    {/* Modal */}
+    {showForm && (
         <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Add Department</h3>
-            <form onSubmit={handleAddDepartment}>
-              <input
-                type="text"
-                value={departmentName}
-                onChange={(e) => setDepartmentName(e.target.value)}
-                placeholder="Department Name"
-                required
-              />
-              <div className="modal-buttons">
-                <button type="submit" disabled={submitting}>
-                  {submitting ? 'Adding...' : 'Add'}
-                </button>
-                <button type="button" onClick={() => setShowForm(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="modal-content">
+                <h3>Add Department</h3>
+                <form onSubmit={handleAddDepartment}>
+                    <input
+                        type="text"
+                        value={departmentName}
+                        onChange={(e) => setDepartmentName(e.target.value)}
+                        placeholder="Department Name"
+                        required
+                    />
+                    <div className="modal-buttons">
+                        <button type="submit" disabled={submitting}>
+                            {submitting ? 'Adding...' : 'Add'}
+                        </button>
+                        <button type="button" onClick={() => setShowForm(false)}>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-      )}
+    )}
 
-      {/* Delete Company Button */}
-      <button onClick={handleDeleteCompany} style={{ marginTop: '1rem', backgroundColor: 'red', color: 'white' }}>
-        Delete Company
-      </button>
+    {/* Buttons container */}
+    <div className="buttons-container">
+        {/* Add Department Button */}
+        <button onClick={() => setShowForm(true)}>Add Department</button>
+
+        {/* Delete Company Button */}
+        <button onClick={handleDeleteCompany} style={{ backgroundColor: 'red' }}>
+            Delete Company
+        </button>
     </div>
+</div>
   );
 };
 
