@@ -1,18 +1,19 @@
-const { Sequelize } = require("sequelize");
-require("dotenv").config();
+// models/index.js
+const sequelize = require("./sequelize");
+const User = require("./users");
+const Company = require("./companies");
+const Department = require("./departments");
 
-// Create Sequelize instance
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-  host: process.env.DB_HOST,
-  dialect: "mysql",  // ✅ Use MySQL dialect
-  dialectModule: require("mysql2"),  // ✅ Use mysql2 as the driver
-  logging: false,  // ✅ Disable logging (optional)
-  pool: {
-    max: 10,
-    min: 0,
-    acquire: 30000,
-    idle: 10000,
-  },
-});
+// Setup associations
+User.hasMany(Company, { foreignKey: "googleId" });
+Company.belongsTo(User, { foreignKey: "googleId" });
 
-module.exports = sequelize;
+Company.hasMany(Department, { foreignKey: "company_id" });
+Department.belongsTo(Company, { foreignKey: "company_id" });
+
+// Optional connection test
+sequelize.authenticate()
+  .then(() => console.log("Database connection successful!"))
+  .catch((err) => console.error("Unable to connect:", err));
+
+module.exports = { sequelize, User, Company, Department };

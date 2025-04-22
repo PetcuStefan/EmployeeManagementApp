@@ -3,7 +3,7 @@ const session = require("express-session");
 const passport = require("passport");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const sequelize = require("./models/index");
+const sequelize = require("./models/sequelize");
 
 dotenv.config();
 require("./config/passport"); // Load passport config
@@ -29,6 +29,7 @@ app.use(passport.session());
 // Routes
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/api/companies", require("./routes/companiesRoutes"));
+app.use("/api/companyDetails", require("./routes/companyDetailsRoutes"));
 
 app.listen(5000, () => console.log("Server running on port 5000"));
 

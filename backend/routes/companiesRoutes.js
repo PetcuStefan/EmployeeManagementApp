@@ -41,7 +41,6 @@ router.post('/addCompany', async (req, res) => {
 
 router.get('/myCompanies', async (req, res) => {
   try {
-    console.log("Session data:", req.session); // Log session data
 
     // Access googleId from passport session
     const googleId = req.session.passport?.user;

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Companies.css';
 
 const Companies = ({ userId }) => {
@@ -8,9 +9,11 @@ const Companies = ({ userId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+
   // Toggle sidebar visibility
   const toggleSidebar = () => {
-  setIsSidebarOpen(!isSidebarOpen);
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   // Fetch companies when the component mounts
@@ -22,7 +25,7 @@ const Companies = ({ userId }) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          credentials: 'include', // Make sure the session info is included
+          credentials: 'include', // include session
         });
 
         if (!res.ok) throw new Error('Failed to fetch companies');
@@ -55,7 +58,7 @@ const Companies = ({ userId }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include', // 👈 this line is crucial!
+        credentials: 'include',
         body: JSON.stringify(payload),
       });
 
@@ -64,7 +67,7 @@ const Companies = ({ userId }) => {
       alert('Company added!');
       setCompanyName('');
       setShowModal(false);
-      // Re-fetch the companies after adding a new one
+
       const newRes = await fetch('http://localhost:5000/api/companies/myCompanies', {
         method: 'GET',
         headers: {
@@ -72,6 +75,7 @@ const Companies = ({ userId }) => {
         },
         credentials: 'include',
       });
+
       const newData = await newRes.json();
       setCompanies(newData);
     } catch (err) {
@@ -80,51 +84,68 @@ const Companies = ({ userId }) => {
     }
   };
 
+  const handleCardClick = (companyId) => {
+    navigate(`/company/${companyId}`);
+  };
+
   return (
-    <div className={isSidebarOpen ? "content" : "sidebar-closed content"}>
+    <div className={isSidebarOpen ? 'content' : 'sidebar-closed content'}>
       <h1>Your Companies</h1>
 
-{loading ? (
-  <p>Loading your companies...</p>
-) : error ? (
-  <p>{error}</p>
-) : (
-  <div className="companies-container">
-    {companies.length === 0 ? (
-      <p>No companies found. Please add one!</p>
-    ) : (
-      companies.map((company) => (
-        <div key={company.company_id} className="company-card">
-          <h3>{company.name}</h3>
-          <p>Created on: {new Date(company.createdAt).toLocaleDateString()}</p>
+      {loading ? (
+        <p>Loading your companies...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <div className="companies-container">
+          {companies.length === 0 ? (
+            <p>No companies found. Please add one!</p>
+          ) : (
+            companies.map((company) => (
+              <div
+                key={company.company_id}
+                className="company-card"
+                onClick={() => handleCardClick(company.company_id)}
+                style={{ cursor: 'pointer' }}
+              >
+                <h3>{company.name}</h3>
+                <p>Created on: {new Date(company.createdAt).toLocaleDateString()}</p>
+              </div>
+            ))
+          )}
         </div>
-      ))
-    )}
-  </div>
-)}
+      )}
 
-<button onClick={() => setShowModal(true)}>Add Company</button>
+      <button onClick={() => setShowModal(true)}>Add Company</button>
 
-{showModal && (
-  <div className="modal-overlay">
-    <div className="modal">
-      <h2>Add Company</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Company Name"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-          required
-        />
-        <div className="modal-buttons">
-          <button type="submit" className='modal-button'>Submit</button>
-          <button type="button" className='modal-button' onClick={() => setShowModal(false)}>Cancel</button>
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Add Company</h2>
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Company Name"
+                value={companyName}
+                onChange={(e) => setCompanyName(e.target.value)}
+                required
+              />
+              <div className="modal-buttons">
+                <button type="submit" className="modal-button">
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  className="modal-button"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </div>
-  </div>
-)}
+      )}
     </div>
   );
 };
