@@ -1,3 +1,4 @@
+@import "../../Utility/colors.css";
 /* Container for displaying companies */
 .companies-container {
   display: grid;
@@ -9,7 +10,7 @@
 
 /* Individual company card */
 .company-card {
-  background-color: #fff;
+  background-color: var(--white);
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -21,13 +22,13 @@
 .company-card:hover {
   transform: scale(1.05); /* Slightly enlarge the card */
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Increase the shadow for depth */
-  background-color: #4CAF50; /* Change background color on hover */
+  background-color: var(--green); /* Change background color on hover */
   cursor: pointer; /* Indicate the card is clickable */
 }
 
 /* Optional: Hover effect for company card text */
 .company-card:hover h3, .company-card:hover p {
-  color: white; /* Change text color to green on hover */
+  color:var(--white); /* Change text color to green on hover */
 }
 
   
@@ -38,7 +39,6 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -46,7 +46,7 @@
   
   /* Modal itself */
   .modal {
-    background-color: #fff;
+    background-color: var(--white);
     padding: 20px;
     border-radius: 8px;
     min-width: 400px;
@@ -73,8 +73,8 @@
   
   /* Styling for the modal buttons */
   button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--green);
+    color: var(--white);
     cursor: pointer;
     width: 15%; /* Set width of buttons to 48% */
     padding: 8px; /* Smaller padding for smaller buttons */
@@ -83,48 +83,34 @@
   }
   
   button:hover {
-    background-color: #45a049;
+    background-color: var(--green);
   }
   
   button[type="button"] {
-    background-color: #f44336;
+    background-color: var(--red);
   }
   
   button[type="button"]:hover {
-    background-color: #e53935;
+    background-color: var(--hover_red);
   }
   
   /* Input field styling */
   input {
     width: 100%;
     box-sizing: border-box;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input_field);
     padding: 10px;
     font-size: 16px;
   }
 
   .modal-button{
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--green);
+    color: var(--white);
     cursor: pointer;
     width: 48%; /* Set width of buttons to 48% */
     padding: 8px; /* Smaller padding for smaller buttons */
     font-size: 16px; /* Keep the text size the same */
     margin: 20px 0; /* Vertical margin to create space between buttons */
-  }
-  
-  /* Sidebar styles - assuming you have a sidebar */
-  .sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 250px;
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    z-index: 10; /* Make sure it's above content */
-    transition: transform 0.3s ease-in-out;
   }
   
   /* Content area that moves to the right when sidebar is open */

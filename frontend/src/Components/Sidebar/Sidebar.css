@@ -1,12 +1,13 @@
+@import "../../Utility/colors.css";
 /* Sidebar is hidden by default */
 .sidebar {
   width: 240px;
-  background-color: #cfc7bd;
-  color: rgb(0, 0, 0);
+  background-color: var(--sidebar);
+  color: var(--black);
   padding: 20px;
   height: 100vh;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  transform: translateX(-100%);
+  box-shadow: 20px 0 20px var(--box_shadow_sidebar);
+  transform: translateX(-100%); 
   transition: transform 0.3s ease;
   position: absolute;
   top: 0;
@@ -36,7 +37,7 @@
 }
 
 .nav-links a {
-  color: rgb(0, 0, 0);
+  color: var(--black);
   text-decoration: none;
   position: relative;
   margin: 15px 0;
@@ -53,7 +54,7 @@
   height: 2px;
   bottom: 0;
   left: 0;
-  background-color: #000000;
+  background-color: var(--black);
   transition: width 0.3s ease;
 }
 
@@ -62,7 +63,7 @@
 }
 
 .nav-links a:hover {
-  color: #000000;
+  color: var(--black);
 }
 
 .logo {
@@ -74,8 +75,8 @@
 .logout-btn {
   margin-top: 20px;
   padding: 10px 15px;
-  background-color: #ef4444;
-  color: white;
+  background-color: var(--red);
+  color: var(--white);
   border: none;
   width: 90%; /* Set width of buttons to 48% */
   border-radius: 5px;
@@ -85,5 +86,5 @@
 }
 
 .logout-btn:hover {
-  background-color: #dc2626;
+  background-color: var(--hover_red);
 }

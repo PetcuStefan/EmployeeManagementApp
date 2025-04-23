@@ -1,6 +1,7 @@
+@import "../../Utility/colors.css";
 .company-details-container {
     padding: 20px;
-    background-color: #f5f5f5;
+    background-color: var(--background);
     border-radius: 8px;
     max-width: 800px;
     margin: 0 auto;
@@ -36,7 +37,7 @@ strong {
 
 /* Individual department list item styling */
 .departments-list li {
-    background-color: #e1e1e1;
+    background-color: var(--list_elements);
     margin: 5px 0;
     padding: 10px;
     border-radius: 4px;
@@ -46,16 +47,16 @@ strong {
 
 /* Hover effect for department items */
 .departments-list li:hover {
-    background-color: #4CAF50; /* Change background color on hover */
-    color: white; /* Change text color */
+    background-color: var(--green); /* Change background color on hover */
+    color: var(--white); /* Change text color */
     cursor: pointer; /* Indicate the item is clickable */
     transform: scale(1.05); /* Slightly enlarge the item on hover */
 }
 
 /* Optional: Add more distinct hover effect on active or clicked items */
 .departments-list li.active {
-    background-color: #45a049; /* Slightly darker green when clicked */
-    color: white;
+    background-color: var(--green); /* Slightly darker green when clicked */
+    color: var(--white);
 }
 
 
@@ -79,27 +80,27 @@ button {
 
 /* Add Department Button */
 button[type="button"] {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--green);
+    color: var(--white);
 }
 
 button[type="button"]:hover {
-    background-color: #45a049;
+    background-color: var(--green);
 }
 
 button:disabled {
-    background-color: #ccc;
+    background-color: var(--input_field);
     cursor: not-allowed;
 }
 
 /* Delete Company Button */
 button[type="button"].delete {
-    background-color: #f44336;
-    color: white;
+    background-color: var(--red);
+    color: var(--white);
 }
 
 button[type="button"].delete:hover {
-    background-color: #e53935;
+    background-color: var(--hover_red);
 }
 
 /* Modal overlay */
@@ -109,7 +110,7 @@ button[type="button"].delete:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--transparent_black);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -118,7 +119,7 @@ button[type="button"].delete:hover {
 
 /* Modal content styling */
 .modal-content {
-    background-color: #fff;
+    background-color: var(--white);
     padding: 20px;
     border-radius: 8px;
     max-width: 400px;
@@ -137,13 +138,13 @@ input {
     margin-bottom: 15px;
     width: 100%;
     font-size: 1rem;
-    border: 1px solid #ccc;
+    border: 1px solid var(--input_field);
     border-radius: 4px;
 }
 
 input:focus {
     outline: none;
-    border-color: #4CAF50;
+    border-color: var(--green);
 }
 
 /* Modal buttons container */
@@ -165,39 +166,39 @@ input:focus {
 
 /* Submit button (Add Department) */
 .modal-buttons button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
+    background-color: var(--green);
+    color: var(--white);
     border: none;
 }
 
 .modal-buttons button[type="submit"]:disabled {
-    background-color: #ccc;
+    background-color: var(--input_field);
     cursor: not-allowed;
 }
 
 /* Cancel button (close modal) */
 .modal-buttons button[type="button"] {
-    background-color: #f44336;
-    color: white;
+    background-color: var(--red);
+    color: var(--white);
     border: none;
 }
 
 .modal-buttons button[type="button"]:hover {
-    background-color: #e53935;
+    background-color: var(--hover_red);
 }
 
 
 /* Delete Company Button - Red */
 button[style*="background-color: red"] {
-    background-color: #f44336;
-    color: white;
+    background-color: var(--red);
+    color: var(--white);
     padding: 10px 20px;
     font-size: 1rem;
     width: auto;
 }
 
 button[style*="background-color: red"]:hover {
-    background-color: #e53935;
+    background-color: var(--hover_red);
 }
 
 /* Container for both the buttons */

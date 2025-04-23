@@ -1,3 +1,4 @@
+@import "../../Utility/colors.css";
 /* Center the login container */
 .login-container {
     display: flex;
@@ -5,7 +6,7 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    background-color: #f8f9fa;
+    background-color: var(--background);
     font-family: Arial, sans-serif;
   }
   
