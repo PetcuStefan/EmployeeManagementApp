@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Node from "../../Components/Node/Node"; // If you need a custom Node component to render the hierarchy
+import { buildEmployeeTree } from "../../Utility/BuildTree";
 import './CompanyDetails.css';
 
 const CompanyDetails = () => {
@@ -78,11 +80,12 @@ const CompanyDetails = () => {
       }
 
       fetchEmployees(departmentId).then((employees) => {
+        const employeeTree = buildEmployeeTree(employees); // Use the tree-building function here
         setExpandedDepartments((latest) => ({
           ...latest,
           [departmentId]: {
             expanded: true,
-            employees,
+            employees: employeeTree, // Store the hierarchical tree of employees
           },
         }));
       });
@@ -178,11 +181,12 @@ const CompanyDetails = () => {
   
       // Refresh just the employee list for that department
       fetchEmployees(currentDepartmentId).then((updatedEmployees) => {
+        const updatedEmployeeTree = buildEmployeeTree(updatedEmployees); // Update the tree
         setExpandedDepartments((prev) => ({
           ...prev,
           [currentDepartmentId]: {
             ...prev[currentDepartmentId],
-            employees: updatedEmployees,
+            employees: updatedEmployeeTree, // Update the employee tree
           },
         }));
       });
@@ -220,6 +224,12 @@ const CompanyDetails = () => {
     }
   };
 
+  const renderEmployeeTree = (employeeTree) => {
+    return employeeTree.map((node) => (
+      <Node key={node.employee_id} employee={node} renderEmployeeTree={renderEmployeeTree} />
+    ));
+  };
+
   if (loading) return <p>Loading company details...</p>;
   if (error) return <p>{error}</p>;
   if (!company) return <p>Company not found</p>;
@@ -245,13 +255,10 @@ const CompanyDetails = () => {
               </div>
               {expandedDepartments[dept.department_id]?.expanded && (
                 <div className="expanded-department">
-                  <ul className="employee-list">
-                    {expandedDepartments[dept.department_id]?.employees?.length > 0 ? (
-                      expandedDepartments[dept.department_id].employees.map((emp) => (
-                        <li key={emp.employee_id}>{emp.name}</li>
-                      ))
-                    ) : (
-                      <li>No employees found</li>
+                  <h3>Employee Hierarchy</h3>
+                  <ul className="employee-hierarchy">
+                    {expandedDepartments[dept.department_id]?.employees && (
+                      renderEmployeeTree(expandedDepartments[dept.department_id].employees)
                     )}
                   </ul>
 
