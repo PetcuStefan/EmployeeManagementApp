@@ -1,4 +1,17 @@
 @import "../Utility/colors.css";
+
+/* Remove default margin and padding */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* If necessary, you can reset body and html margins specifically */
+html, body {
+  margin: 0;
+}
+
 .layout-container {
     display: flex;
     height: 100vh;
