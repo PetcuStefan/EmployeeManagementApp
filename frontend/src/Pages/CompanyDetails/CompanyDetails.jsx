@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Node from "../../Components/Node/Node"; // If you need a custom Node component to render the hierarchy
-import { buildEmployeeTree } from "../../Utility/BuildTree";
 import './CompanyDetails.css';
 
 const CompanyDetails = () => {
@@ -19,7 +17,7 @@ const CompanyDetails = () => {
   const [employeeName, setEmployeeName] = useState('');
   const [hireDate, setHireDate] = useState('');
   const [submittingEmployee, setSubmittingEmployee] = useState(false);
-  const [currentDepartmentId, setCurrentDepartmentId] = useState(null); // To track the department for adding employee
+  const [currentDepartmentId, setCurrentDepartmentId] = useState(null);
 
   const fetchCompanyDetails = async () => {
     try {
@@ -39,62 +37,15 @@ const CompanyDetails = () => {
     }
   };
 
-  const fetchEmployees = async (departmentId) => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/CompanyDetails/${id}/EmployeeList/${departmentId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
-      if (!res.ok) throw new Error('Failed to fetch employees');
-      const data = await res.json();
-      return data;
-    } catch (err) {
-      console.error(err);
-      return [];
-    }
-  };
-
-  const handleDepartmentClick = async (departmentId) => {
+  const handleDepartmentClick = (departmentId) => {
     setExpandedDepartments((prev) => {
       const isExpanded = prev[departmentId]?.expanded;
-
-      if (isExpanded) {
-        return {
-          ...prev,
-          [departmentId]: {
-            ...prev[departmentId],
-            expanded: false,
-          },
-        };
-      }
-
-      if (prev[departmentId]?.employees) {
-        return {
-          ...prev,
-          [departmentId]: {
-            ...prev[departmentId],
-            expanded: true,
-          },
-        };
-      }
-
-      fetchEmployees(departmentId).then((employees) => {
-        const employeeTree = buildEmployeeTree(employees); // Use the tree-building function here
-        setExpandedDepartments((latest) => ({
-          ...latest,
-          [departmentId]: {
-            expanded: true,
-            employees: employeeTree, // Store the hierarchical tree of employees
-          },
-        }));
-      });
 
       return {
         ...prev,
         [departmentId]: {
           ...prev[departmentId],
-          expanded: true,
+          expanded: !isExpanded,
         },
       };
     });
@@ -121,7 +72,7 @@ const CompanyDetails = () => {
 
       setDepartmentName('');
       setShowForm(false);
-      fetchCompanyDetails(); // Refresh list
+      fetchCompanyDetails();
     } catch (err) {
       console.error(err);
       alert('Failed to add department');
@@ -152,20 +103,17 @@ const CompanyDetails = () => {
 
   const handleAddEmployee = async (e) => {
     e.preventDefault();
-  
-    if (!employeeName.trim() || !hireDate) {
-      return alert("Please provide both name and hire date.");
-    }
-  
+    if (!employeeName.trim() || !hireDate) return alert("Please provide both name and hire date.");
+
     setSubmittingEmployee(true);
-  
+
     try {
       const payload = {
         departmentId: currentDepartmentId,
         name: employeeName,
         hire_date: hireDate,
       };
-  
+
       const res = await fetch(`http://localhost:5000/api/CompanyDetails/${id}/addEmployee`, {
         method: 'POST',
         headers: {
@@ -174,60 +122,20 @@ const CompanyDetails = () => {
         credentials: 'include',
         body: JSON.stringify(payload),
       });
-  
+
       if (!res.ok) {
         throw new Error('Failed to add employee');
       }
-  
-      // Refresh just the employee list for that department
-      fetchEmployees(currentDepartmentId).then((updatedEmployees) => {
-        const updatedEmployeeTree = buildEmployeeTree(updatedEmployees); // Update the tree
-        setExpandedDepartments((prev) => ({
-          ...prev,
-          [currentDepartmentId]: {
-            ...prev[currentDepartmentId],
-            employees: updatedEmployeeTree, // Update the employee tree
-          },
-        }));
-      });
-  
-      // Reset form
+
       setEmployeeName('');
       setHireDate('');
       setCurrentDepartmentId(null);
-  
     } catch (err) {
       console.error(err);
       alert('Error adding employee');
     } finally {
       setSubmittingEmployee(false);
     }
-  };
-
-  const handleDeleteDepartment = async (departmentId) => {
-    if (window.confirm('Are you sure you want to delete this department? This action is permanent.')) {
-      try {
-        const res = await fetch(`http://localhost:5000/api/CompanyDetails/DeleteDepartment/${departmentId}`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-        });
-
-        if (!res.ok) throw new Error('Failed to delete department');
-
-        alert('Department deleted successfully');
-        fetchCompanyDetails(); // Refresh list
-      } catch (err) {
-        console.error(err);
-        alert('Failed to delete department');
-      }
-    }
-  };
-
-  const renderEmployeeTree = (employeeTree) => {
-    return employeeTree.map((node) => (
-      <Node key={node.employee_id} employee={node} renderEmployeeTree={renderEmployeeTree} />
-    ));
   };
 
   if (loading) return <p>Loading company details...</p>;
@@ -255,19 +163,10 @@ const CompanyDetails = () => {
               </div>
               {expandedDepartments[dept.department_id]?.expanded && (
                 <div className="expanded-department">
-                  <h3>Employee Hierarchy</h3>
-                  <ul className="employee-hierarchy">
-                    {expandedDepartments[dept.department_id]?.employees && (
-                      renderEmployeeTree(expandedDepartments[dept.department_id].employees)
-                    )}
-                  </ul>
-
-                  {/* Add Employee Button */}
+                  {/* Buttons for Add Employee and Delete Department */}
                   <div className="department-actions">
                     <button
-                      onClick={() => {
-                        setCurrentDepartmentId(dept.department_id); // Open the modal for this department
-                      }}
+                      onClick={() => setCurrentDepartmentId(dept.department_id)}
                     >
                       Add Employee
                     </button>
