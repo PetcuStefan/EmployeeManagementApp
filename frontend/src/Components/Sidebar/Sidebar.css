@@ -1,8 +1,8 @@
 /* Sidebar is hidden by default */
 .sidebar {
   width: 240px;
-  background-color: #1e1e2f;
-  color: white;
+  background-color: #cfc7bd;
+  color: rgb(0, 0, 0);
   padding: 20px;
   height: 100vh;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
@@ -36,15 +36,33 @@
 }
 
 .nav-links a {
-  color: white;
+  color: rgb(0, 0, 0);
   text-decoration: none;
+  position: relative;
   margin: 15px 0;
+  padding: 8px 0;
   font-weight: 500;
+  display: inline-block;
   transition: color 0.3s ease;
 }
 
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #000000;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
 .nav-links a:hover {
-  color: #7dd3fc;
+  color: #000000;
 }
 
 .logo {
