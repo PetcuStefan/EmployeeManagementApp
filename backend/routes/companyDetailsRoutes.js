@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Company, Department } = require('../models');
+const { Company, Department, Employee } = require('../models');
 
 router.get('/:id', async (req, res) => {
   try {
@@ -63,5 +63,35 @@ router.delete('/DeleteCompany/:id', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+router.get('/:id/EmployeeList/:departmentId', async (req, res) => {
+  const { id, departmentId } = req.params;
+  
+  try {
+    const department = await Department.findOne({
+      where: {
+        department_id: departmentId,
+        company_id: id,
+      },
+      include: [
+        {
+          model: Employee,
+          attributes: ['employee_id', 'name', 'hire_date', 'manager_id', 'department_id'],
+        },
+      ],
+    });
+
+    if (!department) {
+      console.warn('⚠️ No department found matching company_id and department_id');
+      return res.status(404).json({ error: 'Department not found for this company' });
+    }
+
+    res.json(department.Employees);
+  } catch (error) {
+    console.error('❌ Error fetching employees:', error);
+    res.status(500).json({ error: 'Failed to fetch employees' });
+  }
+});
+
 
 module.exports = router;
