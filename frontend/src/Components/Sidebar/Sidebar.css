@@ -1,13 +1,37 @@
 @import "../../Utility/colors.css";
-/* Sidebar is hidden by default */
+
+/* Sidebar wrapper containing the hover zone and the sidebar */
+.sidebar-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--sidebar);
+  box-shadow: 2px 0 10px var(--box_shadow_sidebar);
+  width: 40px; /* Collapsed width of the sidebar */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  transition: width 0.3s ease;
+}
+
+/* Sidebar expands on hover */
+.sidebar-wrapper:hover {
+  width: 240px;
+}
+
+.sidebar-wrapper:hover .sidebar {
+  transform: translateX(0); /* Sidebar slides in when wrapper is hovered */
+}
+
+/* Sidebar content */
 .sidebar {
   width: 240px;
   background-color: var(--sidebar);
   color: var(--black);
   padding: 20px;
   height: 100vh;
-  box-shadow: 20px 0 20px var(--box_shadow_sidebar);
-  transform: translateX(-100%); 
+  transform: translateX(-100%); /* Start off-screen */
   transition: transform 0.3s ease;
   position: absolute;
   top: 0;
@@ -15,22 +39,47 @@
   z-index: 1000;
 }
 
-.sidebar-wrapper:hover .sidebar {
-  transform: translateX(0);
+.sidebar.show {
+  transform: translateX(0); /* Show the sidebar when "show" class is applied */
 }
 
-/* Hover zone */
-.sidebar-wrapper {
-  position: relative;
-  width: 40px; /* small hover zone on the side */
-  height: 100vh;
+/* Hamburger Icon Styling */
+.sidebar-wrapper .hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: absolute; /* Positioning it inside the sidebar */
+  top: 28px; /* Adjust the distance from the top */
+  left: 10px; /* Adjust the distance from the left side */
 }
 
-.sidebar-wrapper:hover {
-  width: 240px;
+/* Individual Hamburger Line Styling */
+.sidebar-wrapper .hamburger div {
+  background-color: var(--black);
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+  transition: all 0.3s ease;
 }
 
-/* Links */
+/* Transform hamburger into close (X) when expanded */
+.sidebar-wrapper.expanded .hamburger div:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.sidebar-wrapper.expanded .hamburger div:nth-child(2) {
+  opacity: 0; /* Hide the middle line */
+}
+
+.sidebar-wrapper.expanded .hamburger div:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Navigation Links */
 .nav-links {
   display: flex;
   flex-direction: column;
@@ -47,6 +96,7 @@
   transition: color 0.3s ease;
 }
 
+/* Link Hover Effects */
 .nav-links a::after {
   content: "";
   position: absolute;
@@ -66,19 +116,21 @@
   color: var(--black);
 }
 
+/* Logo */
 .logo {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 30px;
 }
 
+/* Logout Button */
 .logout-btn {
   margin-top: 20px;
   padding: 10px 15px;
   background-color: var(--red);
   color: var(--white);
   border: none;
-  width: 90%; /* Set width of buttons to 48% */
+  width: 90%;
   border-radius: 5px;
   cursor: pointer;
   font-weight: 500;
