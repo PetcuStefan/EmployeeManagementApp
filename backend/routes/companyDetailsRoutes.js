@@ -66,7 +66,7 @@ router.delete('/DeleteCompany/:id', async (req, res) => {
 
 router.get('/:id/EmployeeList/:departmentId', async (req, res) => {
   const { id, departmentId } = req.params;
-  
+
   try {
     const department = await Department.findOne({
       where: {
@@ -90,6 +90,33 @@ router.get('/:id/EmployeeList/:departmentId', async (req, res) => {
   } catch (error) {
     console.error('❌ Error fetching employees:', error);
     res.status(500).json({ error: 'Failed to fetch employees' });
+  }
+});
+
+router.post('/:companyId/addEmployee', async (req, res) => {
+  const { companyId } = req.params;
+  const { departmentId, name, hire_date } = req.body;
+
+  try {
+    // Check if the department exists
+    const department = await Department.findOne({ where: { department_id: departmentId, company_id: companyId } });
+    if (!department) {
+      return res.status(404).json({ error: 'Department not found' });
+    }
+
+    // Create a new employee record in the Employee table
+    const newEmployee = await Employee.create({
+      department_id: departmentId,
+      manager_id: null,  // Assuming manager_id is optional or defaulted. Update as necessary.
+      name: name,
+      hire_date: new Date(hire_date),
+    });
+
+    // Return the created employee object as a response
+    res.status(201).json(newEmployee);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while adding the employee' });
   }
 });
 

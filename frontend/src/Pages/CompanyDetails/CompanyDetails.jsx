@@ -14,6 +14,10 @@ const CompanyDetails = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const [expandedDepartments, setExpandedDepartments] = useState({});
+  const [employeeName, setEmployeeName] = useState('');
+  const [hireDate, setHireDate] = useState('');
+  const [submittingEmployee, setSubmittingEmployee] = useState(false);
+  const [currentDepartmentId, setCurrentDepartmentId] = useState(null); // To track the department for adding employee
 
   const fetchCompanyDetails = async () => {
     try {
@@ -143,6 +147,79 @@ const CompanyDetails = () => {
     }
   };
 
+  const handleAddEmployee = async (e) => {
+    e.preventDefault();
+  
+    if (!employeeName.trim() || !hireDate) {
+      return alert("Please provide both name and hire date.");
+    }
+  
+    setSubmittingEmployee(true);
+  
+    try {
+      const payload = {
+        departmentId: currentDepartmentId,
+        name: employeeName,
+        hire_date: hireDate,
+      };
+  
+      const res = await fetch(`http://localhost:5000/api/CompanyDetails/${id}/addEmployee`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload),
+      });
+  
+      if (!res.ok) {
+        throw new Error('Failed to add employee');
+      }
+  
+      // Refresh just the employee list for that department
+      fetchEmployees(currentDepartmentId).then((updatedEmployees) => {
+        setExpandedDepartments((prev) => ({
+          ...prev,
+          [currentDepartmentId]: {
+            ...prev[currentDepartmentId],
+            employees: updatedEmployees,
+          },
+        }));
+      });
+  
+      // Reset form
+      setEmployeeName('');
+      setHireDate('');
+      setCurrentDepartmentId(null);
+  
+    } catch (err) {
+      console.error(err);
+      alert('Error adding employee');
+    } finally {
+      setSubmittingEmployee(false);
+    }
+  };
+
+  const handleDeleteDepartment = async (departmentId) => {
+    if (window.confirm('Are you sure you want to delete this department? This action is permanent.')) {
+      try {
+        const res = await fetch(`http://localhost:5000/api/CompanyDetails/DeleteDepartment/${departmentId}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        });
+
+        if (!res.ok) throw new Error('Failed to delete department');
+
+        alert('Department deleted successfully');
+        fetchCompanyDetails(); // Refresh list
+      } catch (err) {
+        console.error(err);
+        alert('Failed to delete department');
+      }
+    }
+  };
+
   if (loading) return <p>Loading company details...</p>;
   if (error) return <p>{error}</p>;
   if (!company) return <p>Company not found</p>;
@@ -167,21 +244,69 @@ const CompanyDetails = () => {
                 {dept.name}
               </div>
               {expandedDepartments[dept.department_id]?.expanded && (
-                <ul className="employee-list">
-                  {expandedDepartments[dept.department_id]?.employees?.length > 0 ? (
-                    expandedDepartments[dept.department_id].employees.map((emp) => (
-                      <li key={emp.employee_id}>{emp.name}</li>
-                    ))
-                  ) : (
-                    <li>No employees found</li>
-                  )}
-                </ul>
+                <div className="expanded-department">
+                  <ul className="employee-list">
+                    {expandedDepartments[dept.department_id]?.employees?.length > 0 ? (
+                      expandedDepartments[dept.department_id].employees.map((emp) => (
+                        <li key={emp.employee_id}>{emp.name}</li>
+                      ))
+                    ) : (
+                      <li>No employees found</li>
+                    )}
+                  </ul>
+
+                  {/* Add Employee Button */}
+                  <div className="department-actions">
+                    <button
+                      onClick={() => {
+                        setCurrentDepartmentId(dept.department_id); // Open the modal for this department
+                      }}
+                    >
+                      Add Employee
+                    </button>
+                    <button onClick={() => handleDeleteDepartment(dept.department_id)} style={{ backgroundColor: 'red' }}>
+                      Delete Department
+                    </button>
+                  </div>
+                </div>
               )}
             </li>
           ))}
         </ul>
       ) : (
         <p>No departments found for this company.</p>
+      )}
+
+      {/* Modal for adding employee */}
+      {currentDepartmentId && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Add Employee</h3>
+            <form onSubmit={handleAddEmployee}>
+              <input
+                type="text"
+                value={employeeName}
+                onChange={(e) => setEmployeeName(e.target.value)}
+                placeholder="Employee Name"
+                required
+              />
+              <input
+                type="date"
+                value={hireDate}
+                onChange={(e) => setHireDate(e.target.value)}
+                required
+              />
+              <div className="modal-buttons">
+                <button type="submit" disabled={submittingEmployee}>
+                  {submittingEmployee ? 'Adding...' : 'Add Employee'}
+                </button>
+                <button type="button" onClick={() => setCurrentDepartmentId(null)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
 
       {showForm && (
