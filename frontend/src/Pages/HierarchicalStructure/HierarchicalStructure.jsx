@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom'; // Make sure this is imported
 import EmployeeCard from '../../Components/EmployeeCard/EmployeeCard'; // import your EmployeeCard component
+import "./HierarchicalStructure.css";
 
 const HierarchicalStructure = () => {
   const { departmentId } = useParams(); // Use useParams to extract departmentId from the URL

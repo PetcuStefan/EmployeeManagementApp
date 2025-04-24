@@ -1,0 +1,7 @@
+.employee-container {
+    margin-left: 250px; /* Adjust this value to move it further right */
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
