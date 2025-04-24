@@ -49,36 +49,6 @@ const HierarchicalStructure = () => {
     }
   }, [departmentId]);
 
-  // Handle drop event and update the manager relationship
-  const onDropEmployee = async (draggedId, droppedId) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/HierarchicalStructure/updateManager`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          draggedId,
-          droppedId,
-        }),
-      });
-
-      if (response.ok) {
-        // After the drop, update the employee state and hierarchy
-        const updatedEmployees = employees.map((emp) =>
-          emp.employee_id === droppedId ? { ...emp, manager_id: draggedId } : emp
-        );
-
-        const updatedHierarchy = buildHierarchy(updatedEmployees); // Rebuild the hierarchy with updated data
-        setEmployees(updatedHierarchy); // Update state with new hierarchy
-      } else {
-        console.error('Failed to update manager_id');
-      }
-    } catch (err) {
-      console.error('Error updating manager_id:', err);
-    }
-  };
-
   if (loading) {
     return <p>Loading...</p>;
   }
