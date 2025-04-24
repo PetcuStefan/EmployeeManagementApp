@@ -120,5 +120,32 @@ router.post('/:companyId/addEmployee', async (req, res) => {
   }
 });
 
+router.delete('/:departmentId/deleteDepartment', async (req, res) => {
+    const { departmentId } = req.body;
+
+  if (!departmentId) {
+    return res.status(400).json({ message: 'Department ID is required' });
+  }
+
+  try {
+    // Replace with your actual DB deletion logic
+    // For example, using Sequelize or a raw SQL query
+    const result = await Department.destroy({
+      where: {
+        department_id: departmentId,
+      },
+    });
+
+    if (result === 0) {
+      return res.status(404).json({ message: 'Department not found or already deleted' });
+    }
+
+    res.status(200).json({ message: 'Department deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error deleting department' });
+  }
+});
+
 
 module.exports = router;

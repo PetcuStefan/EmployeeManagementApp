@@ -138,6 +138,32 @@ const CompanyDetails = () => {
     }
   };
 
+  const handleDeleteDepartment = async (departmentId) => {
+    if (window.confirm('Are you sure you want to delete this department? This action is permanent.')) {
+      try {
+        const res = await fetch(`http://localhost:5000/api/CompanyDetails/${id}/deleteDepartment`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body: JSON.stringify({ departmentId }), // ✅ Send departmentId in body
+        });
+  
+        if (!res.ok) {
+          throw new Error('Failed to delete department');
+        }
+
+        alert('Department deleted successfully');
+        fetchCompanyDetails();
+      } catch (err) {
+        console.error(err);
+        alert('Error deleting department');
+      }
+    }
+  };
+  
+
   if (loading) return <p>Loading company details...</p>;
   if (error) return <p>{error}</p>;
   if (!company) return <p>Company not found</p>;
