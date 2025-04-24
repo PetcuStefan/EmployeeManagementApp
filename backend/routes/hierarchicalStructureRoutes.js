@@ -46,13 +46,21 @@ router.get('/:departmentId/EmployeeList', async (req, res) => {
   });
   
 
-router.put('/:id/assignManager', async (req, res) => {
-    const { id } = req.params;
-    const { manager_id } = req.body;
-  
+  router.put('/updateManager', async (req, res) => {
+    const { draggedId, droppedId } = req.body;
+    
     try {
-      await Employee.update({ manager_id }, { where: { employee_id: id } });
-      res.status(200).json({ message: 'Manager updated successfully' });
+      // Update the manager_id of the dropped employee
+      const result = await Employee.update(
+        { manager_id: draggedId },
+        { where: { employee_id: droppedId } }
+      );
+  
+      if (result[0] === 1) {
+        res.status(200).send({ message: 'Manager updated successfully' });
+      } else {
+        res.status(404).send({ message: 'Employee not found' });
+      }
     } catch (error) {
       console.error('Error updating manager:', error);
       res.status(500).json({ message: 'Failed to update manager' });
