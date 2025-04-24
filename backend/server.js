@@ -30,6 +30,7 @@ app.use(passport.session());
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/api/companies", require("./routes/companiesRoutes"));
 app.use("/api/companyDetails", require("./routes/companyDetailsRoutes"));
+app.use("/api/hierarchicalStructure", require("./routes/hierarchicalStructureRoutes"));
 
 app.listen(5000, () => console.log("Server running on port 5000"));
 

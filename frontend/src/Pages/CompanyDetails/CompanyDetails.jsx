@@ -191,10 +191,11 @@ const CompanyDetails = () => {
                 <div className="expanded-department">
                   {/* Buttons for Add Employee and Delete Department */}
                   <div className="department-actions">
-                    <button
-                      onClick={() => setCurrentDepartmentId(dept.department_id)}
-                    >
+                    <button onClick={() => setCurrentDepartmentId(dept.department_id)}>
                       Add Employee
+                    </button>
+                    <button onClick={() => navigate(`/HierarchicalStructure/${dept.department_id}`)}>
+                      Manage Employees
                     </button>
                     <button onClick={() => handleDeleteDepartment(dept.department_id)} style={{ backgroundColor: 'red' }}>
                       Delete Department
