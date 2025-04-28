@@ -46,52 +46,20 @@ const HierarchicalStructure = () => {
       id: employee.employee_id,
       children: employee.children ? employee.children.map(renderHierarchyForTree) : [],
     };
-    console.log('Rendering employee data for tree:', employeeData); // Log the data being rendered for each employee
     return employeeData;
   };
 
-  const handleDropEmployee = (draggedId, targetId) => {
-    const updatedEmployees = [...employees];
-    
-    // Find the dragged and target employee
-    const draggedEmployee = findEmployeeById(updatedEmployees, draggedId);
-    const targetEmployee = findEmployeeById(updatedEmployees, targetId);
-
-    if (draggedEmployee && targetEmployee) {
-      // Update the dragged employee's manager to the target employee's ID
-      draggedEmployee.manager_id = targetId;
-
-      setEmployees(updatedEmployees);
-    }
-  };
-
-  const findEmployeeById = (employees, id) => {
-    for (let employee of employees) {
-      if (employee.employee_id === id) {
-        return employee;
-      }
-      if (employee.children) {
-        const child = findEmployeeById(employee.children, id);
-        if (child) return child;
-      }
-    }
-    return null;
-  };
-
   const treeData = employees.map(renderHierarchyForTree);
-  console.log('Tree Data:', treeData);
 
   return (
     <div className="employee-container">
       <Tree
         data={treeData}
         renderCustomNodeElement={(rd3tProps) => {
-            console.log('Sending node data to EmployeeCard:', rd3tProps.nodeDatum); // Log node data before passing to EmployeeCard
             return (
               <EmployeeCard
                 employee={rd3tProps.nodeDatum}
                 nodeDatum={rd3tProps.nodeDatum}
-                onDropEmployee={handleDropEmployee}
               />
             );
           }}

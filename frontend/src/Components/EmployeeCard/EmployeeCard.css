@@ -1,3 +1,4 @@
+@import url("../../Utility/colors.css");
 /* Wrapper for the employee cards */
 .employee-card-container {
     display: flex;
@@ -8,7 +9,7 @@
   }
   
   /* Individual employee card */
-  .employee-card {
+  .rd3t-node.employee-card {
     width: 200px; /* You can adjust this based on your design */
     height: auto; /* Keeps the card height flexible based on content */
     padding: 15px;

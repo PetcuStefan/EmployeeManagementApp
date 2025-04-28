@@ -14,3 +14,29 @@
   text-align: center;
   margin-top: 50px;
 }
+
+/* Override the node styles from react-d3-tree */
+.rd3t-node rect {
+  fill: var(--green) !important; /* Change background color */
+  stroke: none !important; /* Remove any border */
+}
+
+.rd3t-node text {
+  font-family: 'Arial', sans-serif !important; /* Set font family */
+  font-weight: normal !important; /* Remove bold text */
+  fill: var(--black) !important; /* Ensure text color is black or as desired */
+  stroke-width: 0.5;
+}
+
+/* Style the leaf nodes (nodes without children) */
+.rd3t-leaf-node rect {
+  fill: var(--sidebar) !important; /* Set text color for leaf nodes */
+  stroke: none !important; /* Remove any border */
+}
+
+.rd3t-leaf-node text {
+  font-family: 'Arial', sans-serif !important; /* Set font family */
+  font-weight: normal !important; /* Remove bold text */
+  fill: var(--black) !important; /* Ensure text color is black or as desired */
+  stroke-width: 0.5 !important; /* Optional: add stroke for better readability */
+}
