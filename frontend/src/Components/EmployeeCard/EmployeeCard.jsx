@@ -4,7 +4,7 @@ import './EmployeeCard.css';
 
 const ItemType = 'EMPLOYEE';
 
-const EmployeeCard = ({ employee, onDropEmployee }) => {
+const EmployeeCard = ({ employee, onDropEmployee, nodeDatum }) => {
   const [{ isDragging }, drag] = useDrag({
     type: ItemType,
     item: { id: employee.employee_id },
@@ -17,20 +17,39 @@ const EmployeeCard = ({ employee, onDropEmployee }) => {
     accept: ItemType,
     drop: (dragged) => {
       if (dragged.id !== employee.employee_id) {
-        onDropEmployee(dragged.id, employee.employee_id); // Update manager_id
+        onDropEmployee(dragged.id, employee.employee_id); // Handle drop
       }
     },
   });
 
   return (
-    <div
-      ref={(node) => drag(drop(node))}
-      className={`employee-card ${isDragging ? 'dragging' : ''}`}
-    >
-      <p><strong>{employee.name}</strong></p>
-      <p>ID: {employee.employee_id}</p>
-    </div>
+    <g ref={(node) => drag(drop(node))} transform="translate(-60, -30)">
+  <rect
+    className="employee-rect"
+    width="120"
+    height="60"
+    rx="10"
+    ry="10"
+  />
+  <text
+    className="employee-name"
+    x="60"
+    y="25"
+    textAnchor="middle"
+  >
+    {employee.name}
+  </text>
+  <text
+    className="employee-id"
+    x="60"
+    y="45"
+    textAnchor="middle"
+  >
+    ID: {employee.employee_id}
+  </text>
+</g>
   );
+  
 };
 
 export default EmployeeCard;

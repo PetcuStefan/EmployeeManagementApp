@@ -1,106 +1,81 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import Tree from 'react-d3-tree'; // Import react-d3-tree
+import Tree from 'react-d3-tree';
+import EmployeeCard from '../../Components/EmployeeCard/EmployeeCard';
+import { buildHierarchy } from '../../Utility/buildTree';
 import './HierarchicalStructure.css';
 
-// Function to build a tree structure from flat employee data
-const buildHierarchy = (employees) => {
-  const employeeMap = {};
-  const root = [];
-
-  // Create a map of employee_id to employee
-  employees.forEach((emp) => {
-    employeeMap[emp.employee_id] = { ...emp, children: [] };
-  });
-
-  // Build the hierarchy
-  employees.forEach((emp) => {
-    if (emp.manager_id) {
-      employeeMap[emp.manager_id].children.push(employeeMap[emp.employee_id]);
-    } else {
-      root.push(employeeMap[emp.employee_id]);
-    }
-  });
-
-  return root;
-};
-
 const HierarchicalStructure = () => {
-  const { departmentId } = useParams();
-  const [employees, setEmployees] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/HierarchicalStructure/${departmentId}/EmployeeList`);
-        const data = await res.json();
-        const hierarchy = buildHierarchy(data); // Convert flat data to hierarchical structure
-        setEmployees(hierarchy);
-      } catch (err) {
-        console.error('Error fetching employee data:', err);
-      } finally {
-        setLoading(false);
+    const { departmentId } = useParams();
+    const [employees, setEmployees] = useState([]);
+    const [loading, setLoading] = useState(true);
+  
+    const treeContainerDimensions = { width: window.innerWidth, height: window.innerHeight };
+  
+    const [translate, setTranslate] = useState({
+      x: treeContainerDimensions.width / 2,
+      y: 100, // Start tree not too high up
+    });
+  
+    useEffect(() => {
+      const fetchEmployees = async () => {
+        try {
+          const res = await fetch(`http://localhost:5000/api/HierarchicalStructure/${departmentId}/EmployeeList`);
+          const data = await res.json();
+          const hierarchy = buildHierarchy(data);
+          setEmployees(hierarchy);
+        } catch (err) {
+          console.error('Error fetching employee data:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      if (departmentId) {
+        fetchEmployees();
       }
-    };
-
-    if (departmentId) {
-      fetchEmployees();
+    }, [departmentId]);
+  
+    if (loading) {
+      return <p>Loading...</p>;
     }
-  }, [departmentId]);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  // Convert the employee data into a format that react-d3-tree can render
-  const renderHierarchyForTree = (employee) => {
-    return {
+  
+    const renderHierarchyForTree = (employee) => ({
       name: employee.name,
       id: employee.employee_id,
       children: employee.children ? employee.children.map(renderHierarchyForTree) : [],
+    });
+  
+    const treeData = employees.map(renderHierarchyForTree);
+  
+    const treeStyle = {
+      width: '100%',
+      height: '100vh',
+      overflow: 'hidden',
     };
+  
+    return (
+      <div className="employee-container" style={treeStyle}>
+        <Tree
+          data={treeData}
+          renderCustomNodeElement={(rd3tProps) => (
+            <EmployeeCard
+              employee={rd3tProps.nodeDatum}
+              nodeDatum={rd3tProps.nodeDatum}
+              onDropEmployee={(draggedId, targetId) => {
+                console.log(`Dragged ${draggedId} onto ${targetId}`);
+              }}
+            />
+          )}
+          orientation="vertical"
+          pathFunc="step"
+          zoom={0.8}
+          translate={translate}
+          nodeSize={{ x: 150, y: 100 }}
+          scaleExtent={{ min: 0.5, max: 2 }}
+        />
+      </div>
+    );
   };
-
-  const treeData = employees.map(renderHierarchyForTree);
-  console.log('Tree Data:', treeData);
-
-  // Style for the tree container
-  const treeStyle = {
-    width: '100%',
-    height: '100vh', // Set a fixed height or make it fill the screen
-    overflow: 'hidden', // Prevent overflow
-  };
-
-  return (
-    <div className="employee-container">
-      {/* Render the tree with react-d3-tree using the default node rendering */}
-      <Tree
-        data={treeData}
-        orientation="vertical"
-        pathFunc="step"
-        zoom={0.8} // Adjust zoom level
-        styles={{
-          links: {
-            stroke: '#000',
-            strokeWidth: '2px',
-          },
-          nodes: {
-            node: {
-              circle: {
-                fill: '#fff',
-                stroke: '#000',
-                strokeWidth: '2px',
-              },
-            },
-          },
-        }}
-        nodeSize={{ x: 150, y: 100 }} // Define the size of each node
-        scaleExtent={{ min: 0.5, max: 2 }} // Set the zoom scale
-        style={treeStyle}
-      />
-    </div>
-  );
-};
-
-export default HierarchicalStructure;
+  
+  export default HierarchicalStructure;
