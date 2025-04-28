@@ -48,14 +48,8 @@ const HierarchicalStructure = () => {
   
     const treeData = employees.map(renderHierarchyForTree);
   
-    const treeStyle = {
-      width: '100%',
-      height: '100vh',
-      overflow: 'hidden',
-    };
-  
     return (
-      <div className="employee-container" style={treeStyle}>
+      <div className="employee-container">
         <Tree
           data={treeData}
           renderCustomNodeElement={(rd3tProps) => (

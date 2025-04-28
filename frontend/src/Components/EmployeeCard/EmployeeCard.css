@@ -39,3 +39,11 @@
   .employee-card.dragging {
     opacity: 0.5; /* Reduces opacity when the card is being dragged */
   }
+  .employee-name {
+    font-size: 14px;
+    font-weight: normal; /* Fix for bold text */
+  }
+  
+  .employee-id {
+    font-size: 10px;
+  }
