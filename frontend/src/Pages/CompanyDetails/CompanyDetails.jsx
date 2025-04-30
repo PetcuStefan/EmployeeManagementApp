@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import Modal from "../../Components/Modal/Modal";
 import './CompanyDetails.css';
 
 const CompanyDetails = () => {
@@ -212,60 +213,54 @@ const CompanyDetails = () => {
 
       {/* Modal for adding employee */}
       {currentDepartmentId && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Add Employee</h3>
-            <form onSubmit={handleAddEmployee}>
-              <input
-                type="text"
-                value={employeeName}
-                onChange={(e) => setEmployeeName(e.target.value)}
-                placeholder="Employee Name"
-                required
-              />
-              <input
-                type="date"
-                value={hireDate}
-                onChange={(e) => setHireDate(e.target.value)}
-                required
-              />
-              <div className="modal-buttons">
-                <button type="submit" disabled={submittingEmployee}>
-                  {submittingEmployee ? 'Adding...' : 'Add Employee'}
-                </button>
-                <button type="button" onClick={() => setCurrentDepartmentId(null)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+  <Modal title="Add Employee" onClose={() => setCurrentDepartmentId(null)}>
+    <form onSubmit={handleAddEmployee}>
+      <input
+        type="text"
+        value={employeeName}
+        onChange={(e) => setEmployeeName(e.target.value)}
+        placeholder="Employee Name"
+        required
+      />
+      <input
+        type="date"
+        value={hireDate}
+        onChange={(e) => setHireDate(e.target.value)}
+        required
+      />
+      <div className="modal-buttons">
+        <button type="submit" disabled={submittingEmployee}>
+          {submittingEmployee ? 'Adding...' : 'Add Employee'}
+        </button>
+        <button type="button" onClick={() => setCurrentDepartmentId(null)}>
+          Cancel
+        </button>
+      </div>
+    </form>
+  </Modal>
+)}
 
-      {showForm && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Add Department</h3>
-            <form onSubmit={handleAddDepartment}>
-              <input
-                type="text"
-                value={departmentName}
-                onChange={(e) => setDepartmentName(e.target.value)}
-                placeholder="Department Name"
-                required
-              />
-              <div className="modal-buttons">
-                <button type="submit" disabled={submitting}>
-                  {submitting ? 'Adding...' : 'Add'}
-                </button>
-                <button type="button" onClick={() => setShowForm(false)}>
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+{showForm && (
+  <Modal title="Add Department" onClose={() => setShowForm(false)}>
+    <form onSubmit={handleAddDepartment}>
+      <input
+        type="text"
+        value={departmentName}
+        onChange={(e) => setDepartmentName(e.target.value)}
+        placeholder="Department Name"
+        required
+      />
+      <div className="modal-buttons">
+        <button type="submit" disabled={submitting}>
+          {submitting ? 'Adding...' : 'Add'}
+        </button>
+        <button type="button" onClick={() => setShowForm(false)}>
+          Cancel
+        </button>
+      </div>
+    </form>
+  </Modal>
+)}
 
       <div className="buttons-container">
         <button onClick={() => setShowForm(true)}>Add Department</button>

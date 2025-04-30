@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Modal from "../../Components/Modal/Modal";
 import './Companies.css';
 
 const Companies = ({ userId }) => {
@@ -91,7 +92,7 @@ const Companies = ({ userId }) => {
   return (
     <div className={isSidebarOpen ? 'content' : 'sidebar-closed content'}>
       <h1>Your Companies</h1>
-
+  
       {loading ? (
         <p>Loading your companies...</p>
       ) : error ? (
@@ -115,36 +116,33 @@ const Companies = ({ userId }) => {
           )}
         </div>
       )}
-
+  
       <button onClick={() => setShowModal(true)}>Add Company</button>
-
+  
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Add Company</h2>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                placeholder="Company Name"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                required
-              />
-              <div className="modal-buttons">
-                <button type="submit" className="modal-button">
-                  Submit
-                </button>
-                <button
-                  type="button"
-                  className="modal-button"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+        <Modal title="Add Company" onClose={() => setShowModal(false)}>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder="Company Name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+              required
+            />
+            <div className="modal-buttons">
+              <button type="submit" className="modal-button">
+                Submit
+              </button>
+              <button
+                type="button"
+                className="modal-button"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

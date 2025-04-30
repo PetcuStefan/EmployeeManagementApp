@@ -1,0 +1,66 @@
+@import "../../Utility/colors.css";
+/* Modal overlay that darkens the background */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--transparent_black);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-container {
+    background: var(--white);
+    width: 400px; /* Fixed consistent width */
+    max-width: 90%;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures no overflow between title and content */
+    box-shadow: 0 4px 12px var(--transparent_black);
+  }
+  
+  .modal-header {
+    background-color: var(--background);
+    padding: 16px;
+    border-bottom: 1px solid var(--input_field);
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .modal-body {
+    padding: 16px;
+  }
+  
+  .modal-buttons {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  
+  .modal-buttons button {
+    padding: 6px 12px;
+  }
+  
+  /* Content area inside modal */
+  .modal-content {
+    margin-bottom: 0;
+    font-size: 1rem;
+    color: var(--modal_header);
+  }
+  
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
