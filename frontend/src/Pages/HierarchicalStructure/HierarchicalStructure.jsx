@@ -113,24 +113,27 @@ const HierarchicalStructure = () => {
         draggable={false}  // Disable the drag functionality
       />
 
-      {isModalOpen && selectedEmployee && (
-        <Modal
-          title={`Employee: ${selectedEmployee.name}`}
-          onClose={() => setIsModalOpen(false)}
-        >
-          <p><strong>ID:</strong> {selectedEmployee.id}</p>
-          {selectedEmployee.title && <p><strong>Title:</strong> {selectedEmployee.title}</p>}
+{isModalOpen && selectedEmployee && (
+  <Modal
+    title={`Employee: ${selectedEmployee.name}`}
+    onClose={() => setIsModalOpen(false)}
+  >
+    <p><strong>ID:</strong> {selectedEmployee.id}</p>
+    {selectedEmployee.title && <p><strong>Title:</strong> {selectedEmployee.title}</p>}
 
-          <div className="modal-buttons">
-            <button className="modal-back-button" onClick={() => setIsModalOpen(false)}>
-              ← Back
-            </button>
-            <button className="modal-delete-button" onClick={handleDeleteEmployee}>
-              🗑 Delete Employee
-            </button>
-          </div>
-        </Modal>
+    <div className="modal-buttons">
+      <button className="modal-back-button" onClick={() => setIsModalOpen(false)}>
+        ← Back
+      </button>
+      {(!selectedEmployee.children || selectedEmployee.children.length === 0) && (
+        <button className="modal-delete-button" onClick={handleDeleteEmployee}>
+          🗑 Delete Employee
+        </button>
       )}
+    </div>
+  </Modal>
+)}
+
     </div>
   );
 };
