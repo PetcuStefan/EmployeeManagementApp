@@ -109,13 +109,21 @@ const CompanyDetails = () => {
     if (!employeeName.trim() || !hireDate) {
       return alert("Please provide both name and hire date.");
     }
-    
-    if (currentDepartment.Employees?.length > 0 && !supervisorId.trim()) {
-      return alert("Supervisor ID is required for departments that already have employees.");
+  
+    if (currentDepartment.Employees?.length > 0) {
+      if (!supervisorId.trim()) {
+        return alert("Supervisor ID is required for departments that already have employees.");
+      }
+      const supervisorExists = currentDepartment.Employees.some(
+        (emp) => emp.employee_id === Number(supervisorId)
+      );
+      if (!supervisorExists) {
+        return alert("Supervisor ID must belong to an existing employee in this department.");
+      }
     }
-    
+  
     setSubmittingEmployee(true);
-
+  
     try {
       const payload = {
         departmentId: currentDepartment.department_id,
@@ -124,7 +132,7 @@ const CompanyDetails = () => {
         hire_date: hireDate,
         supervisor_id: currentDepartment.Employees?.length > 0 ? supervisorId : null,
       };
-
+  
       const res = await fetch(`http://localhost:5000/api/CompanyDetails/${id}/addEmployee`, {
         method: 'POST',
         headers: {
@@ -133,23 +141,26 @@ const CompanyDetails = () => {
         credentials: 'include',
         body: JSON.stringify(payload),
       });
-
+  
       if (!res.ok) {
-        throw new Error('Failed to add employee');
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to add employee');
       }
-
+  
       setEmployeeName('');
       setSalary('');
       setHireDate('');
       setSupervisorId('');
       setCurrentDepartment(null);
+      fetchCompanyDetails(); // Refresh list
     } catch (err) {
       console.error(err);
-      alert('Error adding employee');
+      alert(err.message || 'Error adding employee');
     } finally {
       setSubmittingEmployee(false);
     }
   };
+  
 
   const handleDeleteDepartment = async (departmentId) => {
     if (window.confirm('Are you sure you want to delete this department? This action is permanent.')) {

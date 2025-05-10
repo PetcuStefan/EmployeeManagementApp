@@ -105,32 +105,43 @@ router.get('/:id/EmployeeList/:departmentId', async (req, res) => {
   }
 });
 
-router.post('/:companyId/addEmployee', async (req, res) => {
-  const { companyId } = req.params;
-  const { departmentId, name, hire_date, salary, supervisor_id } = req.body;
+router.post('/:id/addEmployee', async (req, res) => {
+  const { departmentId, name, salary, hire_date, supervisor_id } = req.body;
 
   try {
-    // Check if the department exists and belongs to the company
-    const department = await Department.findOne({ where: { department_id: departmentId, company_id: companyId } });
+    const department = await Department.findByPk(departmentId, {
+      include: [Employee],
+    });
+
     if (!department) {
       return res.status(404).json({ error: 'Department not found' });
     }
 
-    // Create a new employee record
+    // Supervisor ID validation
+    if (supervisor_id) {
+      const supervisorExists = department.Employees.some(
+        (emp) => emp.employee_id === Number(supervisor_id)
+      );
+      if (!supervisorExists) {
+        return res.status(400).json({ error: 'Supervisor ID does not exist in this department' });
+      }
+    }
+
     const newEmployee = await Employee.create({
+      name,
+      salary,
+      hire_date,
       department_id: departmentId,
-      manager_id: supervisor_id || null, // Use null if not provided
-      name: name,
-      salary: parseFloat(salary),
-      hire_date: new Date(hire_date),
+      manager_id: supervisor_id || null,
     });
 
     res.status(201).json(newEmployee);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'An error occurred while adding the employee' });
+  } catch (error) {
+    console.error('❌ Error adding employee:', error);
+    res.status(500).json({ error: 'Failed to add employee' });
   }
 });
+
 
 
 router.delete('/:departmentId/deleteDepartment', async (req, res) => {
