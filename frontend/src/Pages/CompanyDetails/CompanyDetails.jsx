@@ -16,7 +16,9 @@ const CompanyDetails = () => {
 
   const [expandedDepartments, setExpandedDepartments] = useState({});
   const [employeeName, setEmployeeName] = useState('');
+  const [salary, setSalary] = useState('');
   const [hireDate, setHireDate] = useState('');
+  const [supervisorId, setSupervisorId] = useState('');
   const [submittingEmployee, setSubmittingEmployee] = useState(false);
   const [currentDepartmentId, setCurrentDepartmentId] = useState(null);
 
@@ -112,7 +114,9 @@ const CompanyDetails = () => {
       const payload = {
         departmentId: currentDepartmentId,
         name: employeeName,
+        salary: salary,
         hire_date: hireDate,
+        supervisor_id: supervisorId ? supervisorId : null,
       };
 
       const res = await fetch(`http://localhost:5000/api/CompanyDetails/${id}/addEmployee`, {
@@ -129,7 +133,9 @@ const CompanyDetails = () => {
       }
 
       setEmployeeName('');
+      setSalary('');
       setHireDate('');
+      setSupervisorId('');
       setCurrentDepartmentId(null);
     } catch (err) {
       console.error(err);
@@ -220,6 +226,19 @@ const CompanyDetails = () => {
         value={employeeName}
         onChange={(e) => setEmployeeName(e.target.value)}
         placeholder="Employee Name"
+        required
+      />
+      <input
+        type="number"
+        value={supervisorId}
+        onChange={(e) => setSupervisorId(e.target.value)}
+        placeholder="Supervisor ID (optional)"
+      />
+      <input
+        type="number"
+        value={salary}
+        onChange={(e) => setSalary(e.target.value)}
+        placeholder="Salary"
         required
       />
       <input

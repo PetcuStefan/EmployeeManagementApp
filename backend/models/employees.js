@@ -22,6 +22,10 @@ Employee.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        salary: {
+            type: DataTypes.DOUBLE,
+            allowNull: false,
+        },
         hire_date: {
             type: DataTypes.DATE,
             allowNull: false,

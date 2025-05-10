@@ -95,30 +95,31 @@ router.get('/:id/EmployeeList/:departmentId', async (req, res) => {
 
 router.post('/:companyId/addEmployee', async (req, res) => {
   const { companyId } = req.params;
-  const { departmentId, name, hire_date } = req.body;
+  const { departmentId, name, hire_date, salary, supervisor_id } = req.body;
 
   try {
-    // Check if the department exists
+    // Check if the department exists and belongs to the company
     const department = await Department.findOne({ where: { department_id: departmentId, company_id: companyId } });
     if (!department) {
       return res.status(404).json({ error: 'Department not found' });
     }
 
-    // Create a new employee record in the Employee table
+    // Create a new employee record
     const newEmployee = await Employee.create({
       department_id: departmentId,
-      manager_id: null,  // Assuming manager_id is optional or defaulted. Update as necessary.
+      manager_id: supervisor_id || null, // Use null if not provided
       name: name,
+      salary: parseFloat(salary),
       hire_date: new Date(hire_date),
     });
 
-    // Return the created employee object as a response
     res.status(201).json(newEmployee);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred while adding the employee' });
   }
 });
+
 
 router.delete('/:departmentId/deleteDepartment', async (req, res) => {
     const { departmentId } = req.body;
