@@ -130,15 +130,17 @@ const HierarchicalStructure = () => {
       <button className="modal-back-button" onClick={() => setIsModalOpen(false)}>
         ← Back
       </button>
+      <button className="modal-profile-button" onClick={() => window.location.href = `/employeeProfile/${selectedEmployee.id}`}>
+        👤 Profile
+      </button>
       {(!selectedEmployee.children || selectedEmployee.children.length === 0) && (
-        <button className="modal-delete-button" onClick={handleDeleteEmployee}>
-          🗑 Delete Employee
-        </button>
+      <button className="modal-delete-button" onClick={handleDeleteEmployee}>
+        🗑 Delete Employee
+      </button>
       )}
     </div>
   </Modal>
 )}
-
     </div>
   );
 };

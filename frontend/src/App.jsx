@@ -8,6 +8,7 @@ import Stats from "./Pages/Stats/Stats";
 import SidebarLayout from "./Layouts/SidebarLayout";
 import CompanyDetails from "./Pages/CompanyDetails/CompanyDetails";
 import HierarchicalStructure from "./Pages/HierarchicalStructure/HierarchicalStructure";
+import EmployeeProfile from "./Pages/EmployeeProfile/EmployeeProfile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/stats" element={<Stats />} />
           <Route path="/company/:id" element={<CompanyDetails />} />
           <Route path="/hierarchicalStructure/:departmentId" element={<HierarchicalStructure />} />
+          <Route path="/employeeProfile/:id" element={<EmployeeProfile/>}/>
         </Route>
       </Routes>
     </DndProvider>
