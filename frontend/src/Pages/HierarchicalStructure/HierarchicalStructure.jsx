@@ -88,6 +88,11 @@ const HierarchicalStructure = () => {
   if (loading) {
     return <p>Loading...</p>;
   }
+  
+  if (!treeData || treeData.length === 0) {
+    return <p style={{ textAlign: 'center', marginTop: '2rem' }}>No employees found in this department.</p>;
+  }
+  
 
   return (
     <div className="employee-container">
