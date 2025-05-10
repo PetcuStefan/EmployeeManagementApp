@@ -3,24 +3,36 @@ const router = express.Router();
 const { Company, Department, Employee } = require('../models');
 
 router.get('/:id', async (req, res) => {
-  try {
+  const { id } = req.params;
 
-    const company = await Company.findByPk(req.params.id, {
-      include: [{ model: Department }],
+  try {
+    const company = await Company.findByPk(id, {
+      include: [
+        {
+          model: Department,
+          include: [
+            {
+              model: Employee,
+              attributes: ['employee_id', 'name', 'hire_date', 'manager_id', 'department_id'],
+            },
+          ],
+        },
+      ],
     });
 
-
     if (!company) {
-      console.warn("⚠️ Company not found with ID:", req.params.id);
-      return res.status(404).json({ message: 'Company not found' });
+      console.warn(`⚠️ No company found with ID: ${id}`);
+      return res.status(404).json({ error: 'Company not found' });
     }
 
     res.json(company);
-  } catch (err) {
-    console.error("🔥 Error during DB query:", err);
-    res.status(500).json({ message: 'Server error' });
+  } catch (error) {
+    console.error('❌ Error fetching company details:', error);
+    res.status(500).json({ error: 'Failed to fetch company details' });
   }
 });
+
+
 
 router.post("/:id/addDepartment", async (req, res) => {
   try {

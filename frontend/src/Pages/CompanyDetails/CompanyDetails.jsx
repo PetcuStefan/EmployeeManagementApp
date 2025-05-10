@@ -20,7 +20,7 @@ const CompanyDetails = () => {
   const [hireDate, setHireDate] = useState('');
   const [supervisorId, setSupervisorId] = useState('');
   const [submittingEmployee, setSubmittingEmployee] = useState(false);
-  const [currentDepartmentId, setCurrentDepartmentId] = useState(null);
+  const [currentDepartment, setCurrentDepartment] = useState(null);
 
   const fetchCompanyDetails = async () => {
     try {
@@ -106,17 +106,23 @@ const CompanyDetails = () => {
 
   const handleAddEmployee = async (e) => {
     e.preventDefault();
-    if (!employeeName.trim() || !hireDate) return alert("Please provide both name and hire date.");
-
+    if (!employeeName.trim() || !hireDate) {
+      return alert("Please provide both name and hire date.");
+    }
+    
+    if (currentDepartment.Employees?.length > 0 && !supervisorId.trim()) {
+      return alert("Supervisor ID is required for departments that already have employees.");
+    }
+    
     setSubmittingEmployee(true);
 
     try {
       const payload = {
-        departmentId: currentDepartmentId,
+        departmentId: currentDepartment.department_id,
         name: employeeName,
         salary: salary,
         hire_date: hireDate,
-        supervisor_id: supervisorId ? supervisorId : null,
+        supervisor_id: currentDepartment.Employees?.length > 0 ? supervisorId : null,
       };
 
       const res = await fetch(`http://localhost:5000/api/CompanyDetails/${id}/addEmployee`, {
@@ -136,7 +142,7 @@ const CompanyDetails = () => {
       setSalary('');
       setHireDate('');
       setSupervisorId('');
-      setCurrentDepartmentId(null);
+      setCurrentDepartment(null);
     } catch (err) {
       console.error(err);
       alert('Error adding employee');
@@ -198,7 +204,7 @@ const CompanyDetails = () => {
                 <div className="expanded-department">
                   {/* Buttons for Add Employee and Delete Department */}
                   <div className="department-actions">
-                    <button onClick={() => setCurrentDepartmentId(dept.department_id)}>
+                    <button onClick={() => setCurrentDepartment(dept)}>
                       Add Employee
                     </button>
                     <button onClick={() => navigate(`/HierarchicalStructure/${dept.department_id}`)}>
@@ -218,8 +224,8 @@ const CompanyDetails = () => {
       )}
 
       {/* Modal for adding employee */}
-      {currentDepartmentId && (
-  <Modal title="Add Employee" onClose={() => setCurrentDepartmentId(null)}>
+      {currentDepartment && (
+  <Modal title="Add Employee" onClose={() => setCurrentDepartment(null)}>
     <form onSubmit={handleAddEmployee}>
       <input
         type="text"
@@ -228,12 +234,18 @@ const CompanyDetails = () => {
         placeholder="Employee Name"
         required
       />
-      <input
-        type="number"
-        value={supervisorId}
-        onChange={(e) => setSupervisorId(e.target.value)}
-        placeholder="Supervisor ID (optional)"
-      />
+
+      {/* Conditionally show Supervisor ID only if employees exist in department */}
+      {currentDepartment.Employees?.length > 0 && (
+        <input
+          type="number"
+          value={supervisorId}
+          onChange={(e) => setSupervisorId(e.target.value)}
+          placeholder="Supervisor ID (required)"
+          required
+        />
+      )}
+
       <input
         type="number"
         value={salary}
@@ -251,13 +263,14 @@ const CompanyDetails = () => {
         <button type="submit" disabled={submittingEmployee}>
           {submittingEmployee ? 'Adding...' : 'Add Employee'}
         </button>
-        <button type="button" onClick={() => setCurrentDepartmentId(null)}>
+        <button type="button" onClick={() => setCurrentDepartment(null)}>
           Cancel
         </button>
       </div>
     </form>
   </Modal>
 )}
+
 
 {showForm && (
   <Modal title="Add Department" onClose={() => setShowForm(false)}>
