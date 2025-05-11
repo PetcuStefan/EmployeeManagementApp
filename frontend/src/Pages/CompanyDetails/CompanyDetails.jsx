@@ -14,7 +14,7 @@ const CompanyDetails = () => {
   const [departmentName, setDepartmentName] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const [expandedDepartments, setExpandedDepartments] = useState({});
+  const [expandedDepartmentId, setExpandedDepartmentId] = useState(null);
   const [employeeName, setEmployeeName] = useState('');
   const [salary, setSalary] = useState('');
   const [hireDate, setHireDate] = useState('');
@@ -41,18 +41,11 @@ const CompanyDetails = () => {
   };
 
   const handleDepartmentClick = (departmentId) => {
-    setExpandedDepartments((prev) => {
-      const isExpanded = prev[departmentId]?.expanded;
+  setExpandedDepartmentId((prevId) => (
+    prevId === departmentId ? null : departmentId
+  ));
+};
 
-      return {
-        ...prev,
-        [departmentId]: {
-          ...prev[departmentId],
-          expanded: !isExpanded,
-        },
-      };
-    });
-  };
 
   useEffect(() => {
     fetchCompanyDetails();
@@ -203,32 +196,28 @@ const CompanyDetails = () => {
       {company.Departments && company.Departments.length > 0 ? (
         <ul className="departments-list">
           {company.Departments.map((dept) => (
-            <li key={dept.department_id}>
-              <div
-                className="department-name"
-                onClick={() => handleDepartmentClick(dept.department_id)}
-                style={{ cursor: 'pointer', fontWeight: 'bold' }}
-              >
-                {dept.name}
+          <li key={dept.department_id}>
+            <div className="department-name" onClick={() => handleDepartmentClick(dept.department_id)} style={{ cursor: 'pointer', fontWeight: 'bold' }}>
+              {dept.name}
+            </div>
+            {expandedDepartmentId === dept.department_id && (
+            <div className="expanded-department">
+              <div className="department-actions">
+                <button onClick={() => setCurrentDepartment(dept)}>
+                  Add Employee
+                </button>
+                <button onClick={() => navigate(`/HierarchicalStructure/${dept.department_id}`)}>
+                  Manage Employees
+                </button>
+                <button onClick={() => handleDeleteDepartment(dept.department_id)} style={{ backgroundColor: 'red' }}>
+                  Delete Department
+                </button>
               </div>
-              {expandedDepartments[dept.department_id]?.expanded && (
-                <div className="expanded-department">
-                  {/* Buttons for Add Employee and Delete Department */}
-                  <div className="department-actions">
-                    <button onClick={() => setCurrentDepartment(dept)}>
-                      Add Employee
-                    </button>
-                    <button onClick={() => navigate(`/HierarchicalStructure/${dept.department_id}`)}>
-                      Manage Employees
-                    </button>
-                    <button onClick={() => handleDeleteDepartment(dept.department_id)} style={{ backgroundColor: 'red' }}>
-                      Delete Department
-                    </button>
-                  </div>
-                </div>
-              )}
-            </li>
+            </div>
+            )}
+          </li>
           ))}
+
         </ul>
       ) : (
         <p>No departments found for this company.</p>
