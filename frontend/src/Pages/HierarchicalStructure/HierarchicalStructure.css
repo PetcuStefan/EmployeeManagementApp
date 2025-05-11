@@ -45,17 +45,61 @@
   stroke-width: 0.5 !important; /* Optional: add stroke for better readability */
 }
 
-.modal-back-button {
-  margin-top: 20px;
-  padding: 8px 16px;
-  font-size: 14px;
-  background-color: #1976d2;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+/* Container for tree-modal buttons */
+.modal-container.tree .modal-buttons {
+  margin-top: 20px !important; 
+  margin-bottom: 20px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;      /* a comfortable gap between rows */
+  margin: 0;
+  padding: 0;
 }
 
-.modal-back-button:hover {
-  background-color: #125ea2;
+/* Make all modal-button-rows have equal vertical padding */
+.modal-container.tree .modal-button-row {
+  width: 100%;
+  padding: 0; /* remove padding from the row itself */
 }
+
+/* Apply vertical padding to the buttons */
+.modal-container.tree .modal-button-row button {
+  width: 100%;
+  padding: 0.75rem 1rem;  /* Match the dual-buttons */
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+
+/* Dual buttons (Back & Delete) */
+.modal-container.tree .dual-buttons {
+  display: flex;
+  gap: 0.5rem;      /* space between the two buttons */
+}
+
+.modal-container.tree .dual-buttons button {
+  flex: 1;          /* each takes equal share */
+  width: 100%;
+  padding: 0.75rem 1rem;  /* Increased vertical padding */
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+/* Button colors */
+.modal-container.tree .modal-profile-button,
+.modal-container.tree .modal-add-under-button {
+  background-color: var(--green);
+  color: var(--white);
+}
+
+.modal-container.tree .modal-back-button,
+.modal-container.tree .modal-delete-button {
+  background-color: var(--red);
+  color: var(--white);
+}
+.modal-container.tree .modal-back-button:hover,
+.modal-container.tree .modal-delete-button:hover {
+  background-color: var(--hover_red);
+}
+
+

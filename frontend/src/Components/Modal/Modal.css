@@ -51,6 +51,29 @@
     font-size: 1rem;
     color: var(--modal_header);
   }
+
+/* Fix spacing ONLY for tree modal */
+.modal-container.tree .modal-content {
+  padding: 0.5rem 1rem;         /* minimal padding around content */
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;                 /* very small gap between children */
+}
+
+/* Remove default spacing from all direct children */
+.modal-container.tree .modal-content > * {
+  margin: 0;
+  padding: 0;
+}
+
+/* Add padding just to the buttons for click target */
+.modal-container.tree .modal-buttons button {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding: 0.75rem 1rem;        /* vertical padding inside buttons */
+  width: 100%;
+  box-sizing: border-box;
+}
   
   /* Fade-in animation */
   @keyframes fadeIn {
