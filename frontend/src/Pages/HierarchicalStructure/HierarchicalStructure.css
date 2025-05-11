@@ -102,4 +102,13 @@
   background-color: var(--hover_red);
 }
 
+.modal-profile-button,
+.modal-add-under-button,
+.modal-back-button,
+.modal-delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 

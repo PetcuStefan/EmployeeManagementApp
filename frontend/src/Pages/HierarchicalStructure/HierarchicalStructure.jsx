@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Tree from 'react-d3-tree';
-import { User, Plus } from 'lucide-react';
+import { User, Plus, MoveLeft, Trash2} from 'lucide-react';
 import EmployeeCard from '../../Components/EmployeeCard/EmployeeCard';
 import Modal from '../../Components/Modal/Modal';
 import { buildHierarchy } from '../../Utility/buildTree';
@@ -139,23 +139,27 @@ const HierarchicalStructure = () => {
 <div className="modal-buttons">
   <div className="modal-button-row">
     <button className="modal-profile-button" onClick={() => window.location.href = `/employeeProfile/${selectedEmployee.id}`}>
-      👤 Profile
+      <User size={18} color="white" style={{ marginRight: '10px' }} />
+      Profile
     </button>
   </div>
 
   <div className="modal-button-row">
     <button className="modal-add-under-button" onClick={() => { setShowAddUnderModal(true); setIsModalOpen(false); }}>
-      ➕ Add Employee Under This
+        <Plus size={18} color="white" style={{ marginRight: '10px' }} />
+        Add Employee Under This
     </button>
   </div>
 
   <div className="modal-button-row dual-buttons">
     <button className="modal-back-button" onClick={() => setIsModalOpen(false)}>
-      ← Back
+      <MoveLeft size={18} color="white" style={{ marginRight: '10px' }}/>
+      Back
     </button>
     {(!selectedEmployee.children || selectedEmployee.children.length === 0) && (
       <button className="modal-delete-button" onClick={handleDeleteEmployee}>
-        🗑 Delete Employee
+        <Trash2 size={18} color="white" style={{ marginRight: '10px' }} />
+        Delete Employee
       </button>
     )}
   </div>
