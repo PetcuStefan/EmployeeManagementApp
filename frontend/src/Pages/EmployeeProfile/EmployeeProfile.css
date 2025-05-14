@@ -1,28 +1,209 @@
+@import "../../Utility/colors.css";
+/* Profile Card */
 .employee-profile {
   max-width: 600px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #ffffff;
+  background-color: var(--white);
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px var(--transparent_black);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .employee-profile h2 {
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
-  color: #333333;
+  color: var(--profile);
   text-align: center;
-  border-bottom: 2px solid #e0e0e0;
+  border-bottom: 2px solid var(--profile);
   padding-bottom: 0.5rem;
 }
 
 .employee-profile p {
   font-size: 1rem;
   margin: 0.5rem 0;
-  color: #555555;
+  color: var(--profile);
 }
 
 .employee-profile strong {
-  color: #222;
+  color: var(--profile);
+}
+
+/* Top Buttons */
+.top-controls {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 5rem;
+  margin-bottom: 1.5rem;
+}
+
+.top-controls button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: var(--green);
+  color: var(--white);
+  border-radius: 6px;
+  width:25%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 1rem;
+}
+
+.top-controls button:hover {
+  background-color: #0056b3;
+}
+
+/* Edit Dropdown (Contextual Style) */
+.edit-dropdown {
+  max-width: 600px;
+  margin: 0 auto;
+  background: var(--white);
+  border: 1px solid var(--input_field);
+  border-radius: 6px;
+  padding: 0.5rem 0;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.edit-dropdown button {
+  background: none;
+  border: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--profile);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.edit-dropdown button:hover {
+  background-color: var(--background);
+  color: var(--green);
+}
+
+
+/* Graph Form */
+.graph-form {
+  max-width: 600px;
+  margin: 1rem auto;
+  background: var(--white);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--input_field);
+  flex-direction: column; /* Stack the form elements vertically */
+  align-items: center; /* Center the form content */
+}
+
+.graph-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.graph-form input,
+.graph-form select {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1rem;
+  border: 1px solid var(--input_field);
+}
+
+/* Button Container */
+.graph-form .button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 1rem;
+}
+
+.graph-form .button-container button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--profile);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.graph-form .button-container button:hover {
+  background-color: var(--background);
+  color: var(--green);
+}
+
+.graph-form .show-graph-container {
+  display: flex;
+  justify-content: center; /* Horizontally centers the button */
+  width: 100%;
+  justify-content: space-evenly; /* Distribute buttons evenly */
+  margin-top: -1rem; /* Add space above the button */
+  margin-bottom: 1rem;
+}
+
+.graph-form .show-graph-container button {
+  padding: 0.5rem 1rem;
+  width: 30%;
+  background-color: var(--green);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block; /* Ensures block-level display for centering */
+  font-size: 1rem;
+}
+
+.graph-form .show-graph-container button:hover {
+  background-color: var(--green);
+}
+
+/* Graph Form Buttons */
+.graph-form .graph-toggle-button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  font-size: 0.95rem;
+  color: var(--profile);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.25s ease, color 0.25s ease;
+  border-radius: 6px;
+  position: relative;
+}
+
+.graph-form .graph-toggle-button:hover {
+  background-color: var(--green);
+  color: var(--white);
+}
+
+/* Active State */
+.graph-form .graph-toggle-button.active {
+  background-color: var(--green);
+  color: var(--white);
+  font-weight: 600;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Icon styling */
+.graph-form .graph-check-icon {
+  margin-left: 8px;
+  position: relative;
+  top: 2px; /* lower it slightly */
+  color: var(--background);
 }
