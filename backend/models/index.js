@@ -23,6 +23,12 @@ SalaryHistory.belongsTo(Employee,{foreignKey:"employee_id"});
 Employee.hasMany(ManagerHistory,{foreignKey:"employee_id"});
 ManagerHistory.belongsTo(Employee,{foreignKey:"employee_id"});
 
+// Self-referencing association for manager (supervisor)
+Employee.belongsTo(Employee, {
+  as: 'Manager',
+  foreignKey: 'manager_id',
+});
+
 // Optional connection test
 sequelize.authenticate()
   .then(() => console.log("Database connection successful!"))

@@ -52,7 +52,7 @@
 }
 
 .top-controls button:hover {
-  background-color: #0056b3;
+  background-color: var(--green);
 }
 
 /* Edit Dropdown (Contextual Style) */

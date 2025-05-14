@@ -7,12 +7,20 @@ router.get('/:id', async (req, res) => {
 
   try {
     const employee = await Employee.findOne({
-      where: { employee_id: id },
-      include: {
+    where: { employee_id: id },
+    include: [
+      {
         model: Department,
         attributes: ['name'],
       },
-    });
+      {
+        model: Employee,
+        as: 'Manager',
+        attributes: ['name'],
+      },
+    ],
+  });
+
 
     if (!employee) {
       console.warn(`⚠️ Employee not found with ID: ${id}`);
@@ -27,6 +35,7 @@ router.get('/:id', async (req, res) => {
       department_id: employee.department_id,
       department_name: employee.Department?.name || null,
       manager_id: employee.manager_id,
+      manager_name: employee.Manager?.name || null,
     });
   } catch (err) {
     console.error('❌ Error fetching employee:', err);

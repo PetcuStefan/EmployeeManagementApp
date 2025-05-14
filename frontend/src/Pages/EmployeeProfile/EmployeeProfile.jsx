@@ -96,8 +96,8 @@ const EmployeeProfile = () => {
         <h2>{employee.name}'s Profile</h2>
         <p><strong>ID:</strong> {employee.employee_id}</p>
         <p><strong>Salary:</strong> {employee.salary || 'N/A'}</p>
-        <p><strong>Department:</strong> {employee.department_id || 'N/A'}</p>
-        <p><strong>Supervisor:</strong> {employee.manager_id || 'N/A'}</p>
+        <p><strong>Department:</strong> {employee.department_name || 'N/A'}</p>
+        <p><strong>Supervisor:</strong> {employee.manager_name || 'N/A'}</p>
         <p><strong>Hire Date:</strong> {employee.hire_date || 'N/A'}</p>
       </div>
 
@@ -110,9 +110,14 @@ const EmployeeProfile = () => {
       {/* Dropdown Options */}
       {showEditOptions && (
         <div className="edit-dropdown">
-          <button onClick={() => navigate(`/changeSupervisor/${employee.employee_id}`)}>Change Supervisor</button>
           <button onClick={() => navigate(`/changeSalary/${employee.employee_id}`)}>Change Salary</button>
-          <button onClick={goToSupervisorProfile}>Go to Supervisor Profile</button>
+
+          {employee.manager_id && employee.manager_name && (
+            <>
+              <button onClick={() => navigate(`/changeSupervisor/${employee.employee_id}`)}>Change Supervisor</button>
+              <button onClick={goToSupervisorProfile}>Go to Supervisor Profile</button>
+            </>
+          )}
         </div>
       )}
 
