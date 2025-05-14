@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Company, Department, Employee } = require('../models');
+const { Company, Department, Employee, SalaryHistory } = require('../models');
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
@@ -108,25 +108,32 @@ router.get('/:id/EmployeeList/:departmentId', async (req, res) => {
 router.post('/:id/addEmployee', async (req, res) => {
   const { departmentId, name, salary, hire_date, supervisor_id } = req.body;
 
+  console.log('📥 Incoming request data:', req.body);
+
   try {
+    console.log('🔍 Looking for department with ID:', departmentId);
     const department = await Department.findByPk(departmentId, {
       include: [Employee],
     });
 
     if (!department) {
+      console.log('❌ Department not found');
       return res.status(404).json({ error: 'Department not found' });
     }
 
     // Supervisor ID validation
     if (supervisor_id) {
+      console.log('🧑‍💼 Validating supervisor ID:', supervisor_id);
       const supervisorExists = department.Employees.some(
         (emp) => emp.employee_id === Number(supervisor_id)
       );
       if (!supervisorExists) {
+        console.log('❌ Supervisor not found in department');
         return res.status(400).json({ error: 'Supervisor ID does not exist in this department' });
       }
     }
 
+    console.log('🛠️ Creating new employee...');
     const newEmployee = await Employee.create({
       name,
       salary,
@@ -135,12 +142,25 @@ router.post('/:id/addEmployee', async (req, res) => {
       manager_id: supervisor_id || null,
     });
 
+    console.log('✅ New employee created:', newEmployee);
+
+    console.log('💾 Inserting salary history...');
+    await SalaryHistory.create({
+      employee_id: newEmployee.employee_id,
+      salary: newEmployee.salary,
+      salary_date: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    console.log('✅ Salary history inserted');
     res.status(201).json(newEmployee);
   } catch (error) {
     console.error('❌ Error adding employee:', error);
     res.status(500).json({ error: 'Failed to add employee' });
   }
 });
+
 
 
 

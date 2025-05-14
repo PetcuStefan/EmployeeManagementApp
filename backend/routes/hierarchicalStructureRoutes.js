@@ -31,28 +31,6 @@ router.get('/:departmentId/EmployeeList', async (req, res) => {
       res.status(500).json({ message: 'Failed to retrieve employees' });
     }
   });
-  
-
-  router.put('/updateManager', async (req, res) => {
-    const { draggedId, droppedId } = req.body;
-    
-    try {
-      // Update the manager_id of the dropped employee
-      const result = await Employee.update(
-        { manager_id: draggedId },
-        { where: { employee_id: droppedId } }
-      );
-  
-      if (result[0] === 1) {
-        res.status(200).send({ message: 'Manager updated successfully' });
-      } else {
-        res.status(404).send({ message: 'Employee not found' });
-      }
-    } catch (error) {
-      console.error('Error updating manager:', error);
-      res.status(500).json({ message: 'Failed to update manager' });
-    }
-  });
 
   router.delete('/:id', async (req, res) => {
     const { id } = req.params;
@@ -86,15 +64,11 @@ router.get('/:departmentId/EmployeeList', async (req, res) => {
   router.put('/changeSupervisor', async (req, res) => {
   const { employeeId, newSupervisorId } = req.body;
 
-  console.log('Received request to change supervisor:', { employeeId, newSupervisorId });
-
   if (!employeeId || !newSupervisorId) {
-    console.log('Missing employeeId or newSupervisorId');
     return res.status(400).json({ message: 'Both employeeId and newSupervisorId are required' });
   }
 
   if (parseInt(employeeId) === parseInt(newSupervisorId)) {
-    console.log('Attempted to assign employee as their own supervisor');
     return res.status(400).json({ message: 'An employee cannot be their own supervisor.' });
   }
 
@@ -102,21 +76,15 @@ router.get('/:departmentId/EmployeeList', async (req, res) => {
     const employee = await Employee.findByPk(employeeId);
     const newSupervisor = await Employee.findByPk(newSupervisorId);
 
-    console.log('Employee record:', employee?.toJSON?.());
-    console.log('New supervisor record:', newSupervisor?.toJSON?.());
-
     if (!employee) {
-      console.log('Employee not found');
       return res.status(404).json({ message: 'Employee not found' });
     }
 
     if (!newSupervisor) {
-      console.log('New supervisor not found');
       return res.status(404).json({ message: 'New supervisor not found' });
     }
 
     if (employee.department_id !== newSupervisor.department_id) {
-      console.log('Supervisor is in a different department');
       return res.status(400).json({ message: 'Supervisor must be in the same department' });
     }
 
