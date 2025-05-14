@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Company, Department, Employee } = require('../models');
+const { Company, Department, Employee, ManagerHistory } = require('../models');
 
 router.get('/:departmentId/EmployeeList', async (req, res) => {
     const { departmentId } = req.params;
@@ -61,7 +61,7 @@ router.get('/:departmentId/EmployeeList', async (req, res) => {
     }
   });
 
-  router.put('/changeSupervisor', async (req, res) => {
+router.put('/changeSupervisor', async (req, res) => {
   const { employeeId, newSupervisorId } = req.body;
 
   if (!employeeId || !newSupervisorId) {
@@ -88,42 +88,51 @@ router.get('/:departmentId/EmployeeList', async (req, res) => {
       return res.status(400).json({ message: 'Supervisor must be in the same department' });
     }
 
-    // Recursive function to check if newSupervisorId is in the subtree of employeeId
-const isCircular = async (currentId) => {
-  const subordinates = await Employee.findAll({ where: { manager_id: currentId } });
+    // Recursive check for circular hierarchy
+    const isCircular = async (currentId) => {
+      const subordinates = await Employee.findAll({ where: { manager_id: currentId } });
+      for (const sub of subordinates) {
+        if (sub.employee_id === parseInt(newSupervisorId)) {
+          return true;
+        }
+        const deeper = await isCircular(sub.employee_id);
+        if (deeper) return true;
+      }
+      return false;
+    };
 
-  for (const sub of subordinates) {
-    if (sub.employee_id === parseInt(newSupervisorId)) {
-      return true;
-    }
-    const deeper = await isCircular(sub.employee_id);
-    if (deeper) return true;
-  }
-
-  return false;
-};
-
-const causesCycle = await isCircular(employeeId);
+    const causesCycle = await isCircular(employeeId);
 
     if (causesCycle) {
       return res.status(400).json({ message: 'Cannot assign a subordinate as supervisor (circular hierarchy)' });
     }
 
+    // Update supervisor
     const result = await Employee.update(
       { manager_id: newSupervisorId },
       { where: { employee_id: employeeId } }
     );
 
     if (result[0] === 1) {
-      return res.status(200).json({ message: 'Supervisor updated successfully' });
+      // Log new manager in manager_history
+      await ManagerHistory.create({
+        employee_id: employeeId,
+        manager_id: newSupervisorId,
+        manager_date: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      return res.status(200).json({ message: 'Supervisor updated and history logged' });
     } else {
       return res.status(400).json({ message: 'No update performed' });
     }
 
   } catch (error) {
-    console.error('Error updating supervisor:', error);
+    console.error('❌ Error updating supervisor:', error);
     return res.status(500).json({ message: 'Failed to update supervisor' });
   }
-});  
+});
+
   
 module.exports = router;
