@@ -1,23 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {Check} from 'lucide-react';
+import { Check } from 'lucide-react';
+import Modal from '../../Components/Modal/Modal';
 import './EmployeeProfile.css';
 
 const EmployeeProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
 
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [showGraphForm, setShowGraphForm] = useState(false);
+
+  const [showChangeSupervisorModal, setShowChangeSupervisorModal] = useState(false);
+  const [changeSupervisorId, setChangeSupervisorId] = useState('');
+
+  const [showChangeSalaryModal, setShowChangeSalaryModal] = useState(false);
+  const [newSalary, setNewSalary] = useState('');
+
   const [graphFilters, setGraphFilters] = useState({
     employeeId: '',
     departmentId: '',
     companyId: '',
     timeUnit: 'year',
-    startDate: '', // Start date
-    endDate: '',   // End date
+    startDate: '',
+    endDate: '',
   });
 
   useEffect(() => {
@@ -27,13 +36,12 @@ const EmployeeProfile = () => {
         const data = await res.json();
         setEmployee(data);
 
-        // Set default start date (hire_date) and end date (today)
-        const today = new Date().toISOString().split('T')[0];  // Get today's date in YYYY-MM-DD format
-        const hireDate = data.hire_date.split('T')[0];  // Extract the hire date from employee data (assuming it's in 'YYYY-MM-DD' format)
-        
-        setGraphFilters((prev) => ({
+        const today = new Date().toISOString().split('T')[0];
+        const hireDate = data.hire_date?.split('T')[0] || today;
+
+        setGraphFilters(prev => ({
           ...prev,
-          startDate: hireDate || today,  // Default to hire_date or today's date if not available
+          startDate: hireDate,
           endDate: today,
         }));
       } catch (err) {
@@ -49,7 +57,6 @@ const EmployeeProfile = () => {
   const handleGraphInputChange = (e) => {
     const { name, value } = e.target;
 
-    // If the date field is cleared, reset it to the default value
     if (name === 'startDate' && value === '') {
       setGraphFilters(prev => ({
         ...prev,
@@ -77,14 +84,73 @@ const EmployeeProfile = () => {
   };
 
   const toggleEditOptions = () => {
-    setShowEditOptions((prev) => !prev);
+    setShowEditOptions(prev => !prev);
     setShowGraphForm(false);
   };
 
   const toggleGraphForm = () => {
-    setShowGraphForm((prev) => !prev);
+    setShowGraphForm(prev => !prev);
     setShowEditOptions(false);
   };
+
+  const handleSupervisorChangeSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('http://localhost:5000/api/HierarchicalStructure/changeSupervisor', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          employeeId: employee.employee_id,
+          newSupervisorId: changeSupervisorId,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Failed to change supervisor');
+      }
+
+      alert('Supervisor changed successfully');
+      setShowChangeSupervisorModal(false);
+      setChangeSupervisorId('');
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || 'Error changing supervisor');
+    }
+  };
+
+  const handleSalaryChangeSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await fetch('http://localhost:5000/api/HierarchicalStructure/changeSalary', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        employeeId: employee.employee_id,
+        newSalary: parseFloat(newSalary),
+      }),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || 'Failed to change salary');
+    }
+
+    alert('Salary changed successfully');
+    setShowChangeSalaryModal(false);
+    setNewSalary('');
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert(err.message || 'Error changing salary');
+  }
+  };
+
 
   if (loading) return <p>Loading employee profile...</p>;
   if (!employee) return <p>Employee not found.</p>;
@@ -101,7 +167,7 @@ const EmployeeProfile = () => {
         <p><strong>Hire Date:</strong> {employee.hire_date || 'N/A'}</p>
       </div>
 
-      {/* Control buttons OUTSIDE profile box */}
+      {/* Control buttons */}
       <div className="top-controls">
         <button onClick={toggleEditOptions}>Edit Profile</button>
         <button onClick={toggleGraphForm}>Make Graph</button>
@@ -110,45 +176,41 @@ const EmployeeProfile = () => {
       {/* Dropdown Options */}
       {showEditOptions && (
         <div className="edit-dropdown">
-          <button onClick={() => navigate(`/changeSalary/${employee.employee_id}`)}>Change Salary</button>
-
+          <button onClick={() => setShowChangeSalaryModal(true)}>Change Salary</button>
           {employee.manager_id && employee.manager_name && (
-            <>
-              <button onClick={() => navigate(`/changeSupervisor/${employee.employee_id}`)}>Change Supervisor</button>
-              <button onClick={goToSupervisorProfile}>Go to Supervisor Profile</button>
-            </>
+            <button onClick={goToSupervisorProfile}>Go to Supervisor Profile</button>
+          )}
+          {employee.manager_id && (
+            <button onClick={() => setShowChangeSupervisorModal(true)}>Change Supervisor</button>
           )}
         </div>
       )}
 
       {/* Graph Form */}
       {showGraphForm && (
-        <div className="graph-form">          
-          {/* Buttons */}
-            <div className="button-container">
-              <button
-                className={`graph-toggle-button ${graphFilters.graphType === 'salary' ? 'active' : ''}`}
-                onClick={() => setGraphFilters({ ...graphFilters, graphType: 'salary' })}
-              >
-                Salary Graph
-                {graphFilters.graphType === 'salary' && (
-                  <Check size={16} className="graph-check-icon" />
-                )}
-              </button>
+        <div className="graph-form">
+          <div className="button-container">
+            <button
+              className={`graph-toggle-button ${graphFilters.graphType === 'salary' ? 'active' : ''}`}
+              onClick={() => setGraphFilters({ ...graphFilters, graphType: 'salary' })}
+            >
+              Salary Graph
+              {graphFilters.graphType === 'salary' && (
+                <Check size={16} className="graph-check-icon" />
+              )}
+            </button>
 
-              <button
-                className={`graph-toggle-button ${graphFilters.graphType === 'supervisor' ? 'active' : ''}`}
-                onClick={() => setGraphFilters({ ...graphFilters, graphType: 'supervisor' })}
-              >
-                Supervisor Graph
-                {graphFilters.graphType === 'supervisor' && (
-                  <Check size={16} className="graph-check-icon" />
-                )}
-              </button>
-            </div>
+            <button
+              className={`graph-toggle-button ${graphFilters.graphType === 'supervisor' ? 'active' : ''}`}
+              onClick={() => setGraphFilters({ ...graphFilters, graphType: 'supervisor' })}
+            >
+              Supervisor Graph
+              {graphFilters.graphType === 'supervisor' && (
+                <Check size={16} className="graph-check-icon" />
+              )}
+            </button>
+          </div>
 
-
-          {/* Date Picker Filters */}
           <label>
             Start Date:
             <input
@@ -169,7 +231,6 @@ const EmployeeProfile = () => {
             />
           </label>
 
-          {/* Time Unit Dropdown */}
           <label>
             Time Unit:
             <select name="timeUnit" value={graphFilters.timeUnit} onChange={handleGraphInputChange}>
@@ -179,11 +240,56 @@ const EmployeeProfile = () => {
             </select>
           </label>
 
-          {/* Show Graph Button */}
           <div className="show-graph-container">
             <button onClick={handleShowGraph}>Show Graph</button>
           </div>
         </div>
+      )}
+
+      {/* Change Supervisor Modal */}
+      {showChangeSupervisorModal && (
+        <Modal
+          title={`Change Supervisor for ${employee.name}`}
+          onClose={() => setShowChangeSupervisorModal(false)}
+        >
+          <form onSubmit={handleSupervisorChangeSubmit}>
+            <input
+              type="number"
+              placeholder="New Supervisor ID"
+              value={changeSupervisorId}
+              onChange={(e) => setChangeSupervisorId(e.target.value)}
+              required
+            />
+            <div className="modal-buttons">
+              <button type="submit">Submit</button>
+              <button type="button" onClick={() => setShowChangeSupervisorModal(false)}>Cancel</button>
+            </div>
+          </form>
+        </Modal>
+      )}
+      {showChangeSalaryModal && (
+        <Modal
+          title={`Change Salary for ${employee.name}`}
+          onClose={() => setShowChangeSalaryModal(false)}
+        >
+          <form onSubmit={handleSalaryChangeSubmit}>
+            <input
+              type="number"
+              placeholder="New Salary"
+              value={newSalary}
+              onChange={(e) => setNewSalary(e.target.value)}
+              required
+              min="0"
+              step="0.01"
+            />
+            <div className="modal-buttons">
+              <button type="submit">Submit</button>
+              <button type="button" onClick={() => setShowChangeSalaryModal(false)}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

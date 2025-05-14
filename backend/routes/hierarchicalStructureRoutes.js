@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { Company, Department, Employee, ManagerHistory } = require('../models');
+const { Company, Department, Employee, ManagerHistory, SalaryHistory } = require('../models');
 
 router.get('/:departmentId/EmployeeList', async (req, res) => {
     const { departmentId } = req.params;
@@ -133,6 +133,43 @@ router.put('/changeSupervisor', async (req, res) => {
     return res.status(500).json({ message: 'Failed to update supervisor' });
   }
 });
+
+router.put('/changeSalary', async (req, res) => {
+  const { employeeId, newSalary } = req.body;
+
+  if (!employeeId || isNaN(newSalary)) {
+    return res.status(400).json({ message: 'Both employeeId and a valid newSalary are required' });
+  }
+
+  try {
+    const employee = await Employee.findByPk(employeeId);
+
+    if (!employee) {
+      return res.status(404).json({ message: 'Employee not found' });
+    }
+
+    // Update the salary
+    await Employee.update(
+      { salary: newSalary },
+      { where: { employee_id: employeeId } }
+    );
+
+    // Insert into SalaryHistory
+    await SalaryHistory.create({
+      employee_id: employeeId,
+      salary: newSalary,
+      salary_date: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    return res.status(200).json({ message: 'Salary updated and history logged' });
+  } catch (error) {
+    console.error('❌ Error updating salary:', error);
+    return res.status(500).json({ message: 'Failed to update salary' });
+  }
+});
+
 
   
 module.exports = router;

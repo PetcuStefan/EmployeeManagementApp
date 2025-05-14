@@ -34,6 +34,7 @@ app.use("/api/hierarchicalStructure", require("./routes/hierarchicalStructureRou
 app.use("/api/employeeProfile", require("./routes/employeeProfileRoutes"));
 
 app.listen(5000, () => console.log("Server running on port 5000"));
+console.log('Server Time Zone:', Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 sequelize.authenticate()
   .then(() => console.log("✅ Database connected successfully"))
