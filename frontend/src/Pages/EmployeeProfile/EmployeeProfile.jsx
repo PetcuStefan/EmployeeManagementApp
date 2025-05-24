@@ -13,22 +13,20 @@ import {
 } from 'recharts';
 import './EmployeeProfile.css';
 
+// ...imports
+
 const EmployeeProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [salaryHistory, setSalaryHistory] = useState([]);
-
   const [showChartModal, setShowChartModal] = useState(false);
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [showGraphForm, setShowGraphForm] = useState(false);
-
   const [showChangeSupervisorModal, setShowChangeSupervisorModal] = useState(false);
   const [changeSupervisorId, setChangeSupervisorId] = useState('');
-
   const [showChangeSalaryModal, setShowChangeSalaryModal] = useState(false);
   const [newSalary, setNewSalary] = useState('');
 
@@ -36,7 +34,6 @@ const EmployeeProfile = () => {
     employeeId: '',
     departmentId: '',
     companyId: '',
-    timeUnit: 'year',
     startDate: '',
     endDate: '',
     graphType: '',
@@ -71,7 +68,9 @@ const EmployeeProfile = () => {
     if (showChartModal && graphFilters.graphType === 'salary') {
       const fetchSalaryHistory = async () => {
         try {
-          const res = await fetch(`http://localhost:5000/api/employeeProfile/salaryHistory/${employee.employee_id}`);
+          const { startDate, endDate } = graphFilters;
+          const query = `?startDate=${startDate}&endDate=${endDate}`;
+          const res = await fetch(`http://localhost:5000/api/employeeProfile/salaryHistory/${employee.employee_id}${query}`);
           const data = await res.json();
           setSalaryHistory(data);
         } catch (err) {
@@ -80,7 +79,7 @@ const EmployeeProfile = () => {
       };
       fetchSalaryHistory();
     }
-  }, [showChartModal, graphFilters.graphType, employee?.employee_id]);
+  }, [showChartModal, graphFilters.graphType, graphFilters.startDate, graphFilters.endDate, employee?.employee_id]);
 
   const processedData = salaryHistory.map((entry) => ({
     salary: entry.salary,
@@ -188,7 +187,6 @@ const EmployeeProfile = () => {
 
   return (
     <div>
-      {/* Profile */}
       <div className="employee-profile">
         <h2>{employee.name}'s Profile</h2>
         <p><strong>ID:</strong> {employee.employee_id}</p>
@@ -198,7 +196,6 @@ const EmployeeProfile = () => {
         <p><strong>Hire Date:</strong> {employee.hire_date || 'N/A'}</p>
       </div>
 
-      {/* Controls */}
       <div className="top-controls">
         <button onClick={toggleEditOptions}>Edit Profile</button>
         <button onClick={toggleGraphForm}>Make Graph</button>
@@ -256,22 +253,12 @@ const EmployeeProfile = () => {
             />
           </label>
 
-          <label>
-            Time Unit:
-            <select name="timeUnit" value={graphFilters.timeUnit} onChange={handleGraphInputChange}>
-              <option value="year">Year</option>
-              <option value="month">Month</option>
-              <option value="day">Day</option>
-            </select>
-          </label>
-
           <div className="show-graph-container">
             <button onClick={handleShowGraph}>Show Graph</button>
           </div>
         </div>
       )}
 
-      {/* Modals */}
       {showChangeSupervisorModal && (
         <Modal title={`Change Supervisor for ${employee.name}`} onClose={() => setShowChangeSupervisorModal(false)}>
           <form onSubmit={handleSupervisorChangeSubmit}>
@@ -310,7 +297,6 @@ const EmployeeProfile = () => {
         </Modal>
       )}
 
-      {/* Chart Modal */}
       {showChartModal && (
         <Modal title={`Graph for ${employee.name}`} onClose={() => setShowChartModal(false)}>
           {graphFilters.graphType === 'salary' ? (
