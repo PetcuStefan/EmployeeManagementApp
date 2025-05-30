@@ -12,8 +12,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import './EmployeeProfile.css';
-
-import SupervisorTimeline from "../../Components/Timeline/Timeline";
+import SupervisorTimeline from '../../Components/Timeline/Timeline';
 
 const EmployeeProfile = () => {
   const { id } = useParams();
@@ -44,6 +43,9 @@ const EmployeeProfile = () => {
     const fetchEmployee = async () => {
       try {
         const res = await fetch(`http://localhost:5000/api/employeeProfile/${id}`);
+        if (!res.ok) {
+          throw new Error(`Failed to fetch employee: ${res.status}`);
+        }
         const data = await res.json();
         setEmployee(data);
 
@@ -72,10 +74,14 @@ const EmployeeProfile = () => {
           const { startDate, endDate } = graphFilters;
           const query = `?startDate=${startDate}&endDate=${endDate}`;
           const res = await fetch(`http://localhost:5000/api/employeeProfile/salaryHistory/${employee.employee_id}${query}`);
+          if (!res.ok) {
+            throw new Error(`Failed to fetch salary history: ${res.status}`);
+          }
           const data = await res.json();
-          setSalaryHistory(data);
+          setSalaryHistory(Array.isArray(data) ? data : []);
         } catch (err) {
           console.error('Failed to load salary history:', err);
+          setSalaryHistory([]);
         }
       };
       fetchSalaryHistory();
@@ -83,73 +89,30 @@ const EmployeeProfile = () => {
   }, [showChartModal, graphFilters.graphType, graphFilters.startDate, graphFilters.endDate, employee?.employee_id]);
 
   useEffect(() => {
-    if (showChartModal && graphFilters.graphType === 'supervisor') {
-      // Hardcoded supervisor history data for testing
-      const hardcodedSupervisorHistory = [
-        {
-          manager_history_id: 1,
-          manager_date: "2022-01-15T00:00:00.000Z",
-          manager_id: 101,
-          manager: {
-            id: 101,
-            name: "Sarah Johnson"
-          }
-        },
-        {
-          manager_history_id: 2,
-          manager_date: "2022-08-01T00:00:00.000Z",
-          manager_id: 102,
-          manager: {
-            id: 102,
-            name: "Michael Chen"
-          }
-        },
-        {
-          manager_history_id: 3,
-          manager_date: "2023-03-15T00:00:00.000Z",
-          manager_id: 103,
-          manager: {
-            id: 103,
-            name: "Emily Rodriguez"
-          }
-        },
-        {
-          manager_history_id: 4,
-          manager_date: "2023-11-01T00:00:00.000Z",
-          manager_id: 104,
-          manager: {
-            id: 104,
-            name: "David Kim"
-          }
-        },
-        {
-          manager_history_id: 5,
-          manager_date: "2024-06-15T00:00:00.000Z",
-          manager_id: 105,
-          manager: {
-            id: 105,
-            name: "Lisa Thompson"
-          }
-        }
-      ];
-      
-      setSupervisorHistory(hardcodedSupervisorHistory);
-      
-      // Uncomment below to use real API call instead of hardcoded data
-      /*
+    if (showChartModal && graphFilters.graphType === 'supervisor' && employee?.employee_id) {
       const fetchSupervisorHistory = async () => {
         try {
+          console.log('Fetching supervisor history for employee_id:', employee.employee_id);
+          console.log('graphFilters:', graphFilters);
           const { startDate, endDate } = graphFilters;
           const query = `?startDate=${startDate}&endDate=${endDate}`;
-          const res = await fetch(`Consumer://localhost:5000/api/employeeProfile/supervisorHistory/${employee.employee_id}${query}`);
+          const url = `http://localhost:5000/api/employeeProfile/supervisorHistory/${employee.employee_id}${query}`;
+          console.log('Fetching URL:', url);
+          const res = await fetch(url);
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            console.error('Fetch error details:', { status: res.status, statusText: res.statusText, errorData });
+            throw new Error(`Failed to fetch supervisor history: ${res.status}`);
+          }
           const data = await res.json();
-          setSupervisorHistory(data);
+          console.log('Supervisor history data:', data);
+          setSupervisorHistory(Array.isArray(data) ? data : []);
         } catch (err) {
           console.error('Failed to load supervisor history:', err);
+          setSupervisorHistory([]);
         }
       };
       fetchSupervisorHistory();
-      */
     }
   }, [showChartModal, graphFilters.graphType, graphFilters.startDate, graphFilters.endDate, employee?.employee_id]);
 

@@ -29,6 +29,12 @@ Employee.belongsTo(Employee, {
   foreignKey: 'manager_id',
 });
 
+ManagerHistory.belongsTo(Employee, {
+  foreignKey: 'manager_id',
+  targetKey: 'employee_id',
+  as: 'manager', // Ensure alias matches the endpoint
+});
+
 // Optional connection test
 sequelize.authenticate()
   .then(() => console.log("Database connection successful!"))

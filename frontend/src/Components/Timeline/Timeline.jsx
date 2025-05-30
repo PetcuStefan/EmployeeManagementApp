@@ -2,22 +2,20 @@ import React from 'react';
 import './Timeline.css';
 
 const Timeline = ({ history }) => {
-  if (!history || history.length === 0) {
+  // Check if history is an array and not empty
+  if (!Array.isArray(history) || history.length === 0) {
     return <p className="no-history">No supervisor history available.</p>;
   }
 
-  // Sort history by date to ensure chronological order
+  // Sort history by manager_date to ensure chronological order
   const sortedHistory = [...history].sort((a, b) => new Date(a.manager_date) - new Date(b.manager_date));
 
-  // Create timeline entries with end dates
+  // Create timeline entries using end_date from the backend
   const timelineEntries = sortedHistory.map((entry, index) => {
     const startDate = new Date(entry.manager_date);
-    const endDate = index < sortedHistory.length - 1 
-      ? new Date(sortedHistory[index + 1].manager_date) 
-      : new Date();
+    const endDate = new Date(entry.end_date);
 
     return {
-      id: entry.manager_history_id,
       managerId: entry.manager_id || entry.manager?.id || 'N/A',
       managerName: entry.manager?.name || 'No Manager',
       startDate: startDate,
@@ -25,7 +23,7 @@ const Timeline = ({ history }) => {
       startDateFormatted: startDate.toLocaleDateString(),
       endDateFormatted: endDate.toLocaleDateString(),
       duration: Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)), // days
-      isCurrent: index === sortedHistory.length - 1
+      isCurrent: index === sortedHistory.length - 1,
     };
   });
 
@@ -38,7 +36,7 @@ const Timeline = ({ history }) => {
       
       <div className="timeline-container">
         {timelineEntries.map((entry, index) => (
-          <div key={entry.id} className={`timeline-entry ${entry.isCurrent ? 'current' : ''}`}>
+          <div key={`${entry.managerId}-${entry.startDate}`} className={`timeline-entry ${entry.isCurrent ? 'current' : ''}`}>
             <div className="timeline-marker">
               <div className="marker-dot"></div>
               {index < timelineEntries.length - 1 && <div className="marker-line"></div>}
