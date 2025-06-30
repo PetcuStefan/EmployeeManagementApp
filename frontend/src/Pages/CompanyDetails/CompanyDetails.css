@@ -76,7 +76,7 @@ strong {
     cursor: pointer;
     white-space: nowrap; /* Prevent text wrapping */
     transition: opacity 0.3s ease;
-    width: 150px;
+    width: 170px;
   }
   
   .department-actions button:hover {
@@ -87,14 +87,7 @@ strong {
     transform: scale(0.98);
   }
   
-  .department-actions button:first-child {
-    background-color: #28a745; /* Green button for Add Employee */
-    color: white;
-  }
-  
   .department-actions button:last-child {
-    background-color: red; /* Red button for Delete Department */
-    color: white;
     margin-left: auto; /* Push the Delete button to the far right */
   }
 
