@@ -32,6 +32,7 @@ app.use("/api/companies", require("./routes/companiesRoutes"));
 app.use("/api/companyDetails", require("./routes/companyDetailsRoutes"));
 app.use("/api/hierarchicalStructure", require("./routes/hierarchicalStructureRoutes"));
 app.use("/api/employeeProfile", require("./routes/employeeProfileRoutes"));
+app.use("/api/statsRoutes", require("./routes/statsRoutes"));
 
 app.listen(5000, () => console.log("Server running on port 5000"));
 console.log('Server Time Zone:', Intl.DateTimeFormat().resolvedOptions().timeZone);
