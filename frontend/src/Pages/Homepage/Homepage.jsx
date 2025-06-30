@@ -19,10 +19,26 @@ const Homepage = () => {
       .catch(() => navigate("/"));
   }, [navigate]);
 
+  const handleLogout = () => {
+    fetch("http://localhost:5000/auth/logout", {
+      method: "GET",
+      credentials: "include",
+    })
+      .then(() => {
+        setUser(null);
+        navigate("/");
+      })
+      .catch((err) => console.error(err));
+  };
+
   return (
     <div className="homepage-container">
       {user ? (
-        <h2 className="welcome-text">Welcome, {user.displayName}</h2>
+        <div className="profile-card">
+          <img className="profile-image" src={user.photo} alt={user.displayName} />
+          <h2 className="welcome-text">Welcome, {user.displayName}</h2>
+          <p className="email-text">{user.email}</p>
+        </div>
       ) : (
         <h2>Loading...</h2>
       )}

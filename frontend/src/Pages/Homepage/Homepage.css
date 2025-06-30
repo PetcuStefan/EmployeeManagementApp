@@ -12,3 +12,39 @@
     color: #111827;
   }
   
+  .homepage-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 90vh;
+  flex-direction: column;
+  text-align: center;
+}
+
+.profile-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+}
+
+.profile-image {
+  width: 80px;
+  border-radius: 50%;
+  margin-bottom: 20px;
+}
+
+.welcome-text {
+  font-size: 24px;
+  margin: 10px 0;
+}
+
+.email-text {
+  color: gray;
+  margin-bottom: 20px;
+}
+
+.logout-btn:hover {
+  background-color: #c1351d;
+}

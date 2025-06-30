@@ -21,6 +21,11 @@ User.init(
       allowNull: false,
       field: "displayName",
     },
+    photo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "photo",
+    },
   },
   {
     sequelize,

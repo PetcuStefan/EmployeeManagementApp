@@ -10,7 +10,12 @@ const Login = () => {
     <div className="login-container">
       <h2>Login with Google</h2>
       <button className="google-btn" onClick={handleGoogleLogin}>
-      <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo" />        Sign in with Google
+      <img
+      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+      alt="Google Logo"
+      style={{ width: "20px", marginRight: "10px" }}
+      />
+        Sign in with Google
       </button>
     </div>
   );
