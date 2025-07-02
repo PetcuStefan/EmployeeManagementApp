@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Stats.css';
 
 const Stats = () => {
-  const [stats, setStats] = useState({ companiesCount: 0, employeesCount: 0 });
+  const [stats, setStats] = useState({ companiesCount: 0, employeesCount: 0, totalSalaries: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -29,7 +29,8 @@ const Stats = () => {
 
         setStats({
           companiesCount: data.companiesCount ?? 0,
-          employeesCount: data.employeesCount ?? 0, // ✅ Add this line
+          employeesCount: data.employeesCount ?? 0,
+          totalSalaries: data.totalSalaries ?? 0,
         });
       } catch (err) {
         console.error('[Stats] Fetch error:', err);
@@ -56,6 +57,7 @@ const Stats = () => {
       <h1>Stats File</h1>
       <p>Number of companies: {stats.companiesCount}</p>
       <p>Number of employees: {stats.employeesCount}</p>
+      <p>Total salaries: {stats.totalSalaries.toLocaleString()}</p>
     </div>
   );
 };

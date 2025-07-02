@@ -4,7 +4,7 @@ const { User, Company, Department, Employee } = require('../models');
 
 router.get('/countCompanies', async (req, res) => {
   try {
-    const user = req.user; // Passport attaches logged-in user here
+    const user = req.user;
     if (!user) {
       console.warn("⚠️ Unauthorized request to /countCompanies: no user in session");
       return res.status(401).json({ error: 'Unauthorized' });
@@ -19,8 +19,11 @@ router.get('/countCompanies', async (req, res) => {
     });
 
     const companyIds = userCompanies.map(c => c.company_id);
-
     console.log(`[Stats] Found ${companyIds.length} company(ies):`, companyIds);
+
+    if (companyIds.length === 0) {
+      return res.json({ companiesCount: 0, employeesCount: 0, totalSalaries: 0 });
+    }
 
     // Step 2: Get departments in those companies
     const departments = await Department.findAll({
@@ -29,25 +32,37 @@ router.get('/countCompanies', async (req, res) => {
     });
 
     const departmentIds = departments.map(d => d.department_id);
-
     console.log(`[Stats] Found ${departmentIds.length} department(s):`, departmentIds);
+
+    if (departmentIds.length === 0) {
+      return res.json({ companiesCount: companyIds.length, employeesCount: 0, totalSalaries: 0 });
+    }
 
     // Step 3: Count employees in those departments
     const employeesCount = await Employee.count({
       where: { department_id: departmentIds }
     });
 
-    // Step 4: Count companies
+    // Step 4: Sum employee salaries
+    const { sum } = await Employee.findOne({
+      where: { department_id: departmentIds },
+      attributes: [[Employee.sequelize.fn('SUM', Employee.sequelize.col('salary')), 'sum']],
+      raw: true,
+    });
+
+    const totalSalaries = parseFloat(sum) || 0;
+
+    // Step 5: Return response
     const companiesCount = companyIds.length;
+    console.log(`[Stats] Final counts — Companies: ${companiesCount}, Employees: ${employeesCount}, Total Salaries: ${totalSalaries}`);
 
-    console.log(`[Stats] Final counts — Companies: ${companiesCount}, Employees: ${employeesCount}`);
-
-    res.json({ companiesCount, employeesCount });
+    res.json({ companiesCount, employeesCount, totalSalaries });
 
   } catch (error) {
     console.error("❌ Error fetching user stats:", error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 module.exports = router;
