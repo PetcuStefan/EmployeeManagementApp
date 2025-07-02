@@ -13,7 +13,7 @@ const Stats = () => {
         const res = await fetch('http://localhost:5000/api/statsRoutes/countCompanies', {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',  // important to send cookies/session
+          credentials: 'include',
         });
 
         console.log('[Stats] Response status:', res.status);
@@ -28,7 +28,8 @@ const Stats = () => {
         console.log('[Stats] Response data:', data);
 
         setStats({
-          companiesCount: data.companiesCount,
+          companiesCount: data.companiesCount ?? 0,
+          employeesCount: data.employeesCount ?? 0, // ✅ Add this line
         });
       } catch (err) {
         console.error('[Stats] Fetch error:', err);
@@ -43,15 +44,13 @@ const Stats = () => {
   }, []);
 
   if (loading) {
-    console.log('[Stats] Loading...');
     return <p className="stats-container">Loading stats...</p>;
   }
+
   if (error) {
-    console.log('[Stats] Error:', error);
     return <p className="stats-container">{error}</p>;
   }
 
-  console.log('[Stats] Render stats:', stats);
   return (
     <div className="stats-container">
       <h1>Stats File</h1>
