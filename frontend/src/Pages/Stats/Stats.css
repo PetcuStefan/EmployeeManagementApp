@@ -1,27 +1,112 @@
-/* Stats.css */
+@import "../../Utility/colors.css";
+
 .stats-container {
-  max-width: 400px;
-  margin: 20px auto;
+  background-color: var(--background);
   padding: 20px;
-  background-color: #f7f9fc;
-  border: 1px solid #ddd;
   border-radius: 8px;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+/* Title */
 .stats-container h1 {
-  font-size: 1.8rem;
-  color: #333;
-  margin-bottom: 15px;
-  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 10px;
+  color: var(--text_primary, #333);
 }
 
-.stats-container p {
+/* Stat blocks */
+.stat-block {
+  background-color: var(--list_elements);
+  padding: 15px 20px;
+  border-radius: 6px;
   font-size: 1.2rem;
-  color: #555;
-  margin: 8px 0;
-  padding: 5px 10px;
-  background-color: #e2e8f0;
-  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
 }
+
+.stat-block:hover {
+  background-color: var(--green);
+  color: var(--white);
+  transform: scale(1.02);
+}
+
+.stat-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.3rem;
+  padding: 12px 16px;
+  border-radius: 6px;
+  background-color: var(--list_elements);
+  transition: background-color 0.3s;
+}
+
+.label-value {
+  display: flex;
+  gap: 10px; /* space between label and value */
+  align-items: center;
+}
+
+/* existing styles */
+.stat-title.hoverable:hover {
+  background-color: var(--green);
+  color: var(--white);
+}
+
+
+.stat-title:hover {
+  background-color: var(--green);
+  color: var(--white);
+}
+
+.arrow-icon {
+  margin-left: 12px;
+  transition: transform 0.3s ease, color 0.3s ease;
+  display: flex;
+  align-items: center;
+  color: var(--black); /* Default color */
+}
+
+.stat-title.hoverable:hover .arrow-icon {
+  color: var(--white); /* Turn white on hover */
+}
+
+.arrow-icon.open {
+  transform: rotate(180deg); /* Flip arrow */
+}
+
+
+/* Expandable detail list */
+.stat-details {
+  margin-top: 12px;
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Each company item */
+.company-item {
+  background-color: var(--list_elements);
+  padding: 10px 12px;
+  border-left: 4px solid var(--green);
+  border-radius: 4px;
+  font-size: 1.05rem;
+  color: #1a1a1a;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.company-item:hover {
+  background-color: var(--green);
+  color: var(--white);
+  cursor: default;
+}
+

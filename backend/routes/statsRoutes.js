@@ -56,7 +56,32 @@ router.get('/countCompanies', async (req, res) => {
     const companiesCount = companyIds.length;
     console.log(`[Stats] Final counts — Companies: ${companiesCount}, Employees: ${employeesCount}, Total Salaries: ${totalSalaries}`);
 
-    res.json({ companiesCount, employeesCount, totalSalaries });
+    // add after employeesCount & totalSalaries:
+    const companyBreakdown = await Promise.all(
+    userCompanies.map(async (company) => {
+    const departments = await Department.findAll({
+      where: { company_id: company.company_id },
+      attributes: ['department_id']
+    });
+
+    const departmentIds = departments.map(d => d.department_id);
+
+    const employees = await Employee.findAll({
+      where: { department_id: departmentIds },
+      attributes: ['salary']
+    });
+
+    const totalSalaries = employees.reduce((sum, e) => sum + (e.salary || 0), 0);
+
+    return {
+      name: company.name || `Company ${company.company_id}`,
+      employeesCount: employees.length,
+      totalSalaries,
+    };
+  })
+);
+
+res.json({ companiesCount, employeesCount, totalSalaries, companyBreakdown });
 
   } catch (error) {
     console.error("❌ Error fetching user stats:", error);
