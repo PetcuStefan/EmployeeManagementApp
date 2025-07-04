@@ -15,7 +15,7 @@ router.get('/countCompanies', async (req, res) => {
     // Step 1: Get companies owned by user
     const userCompanies = await Company.findAll({
       where: { googleId: user.googleId },
-      attributes: ['company_id']
+      attributes: ['company_id','name']
     });
 
     const companyIds = userCompanies.map(c => c.company_id);
@@ -74,6 +74,7 @@ router.get('/countCompanies', async (req, res) => {
     const totalSalaries = employees.reduce((sum, e) => sum + (e.salary || 0), 0);
 
     return {
+      company_id: company.company_id, // ✅ Add this line
       name: company.name || `Company ${company.company_id}`,
       employeesCount: employees.length,
       totalSalaries,
@@ -88,6 +89,64 @@ res.json({ companiesCount, employeesCount, totalSalaries, companyBreakdown });
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+router.get('/employeesPerDepartment/:companyId', async (req, res) => {
+  const { companyId } = req.params;
+  console.log(`📊 [EMPLOYEES] Fetching employee count per department for company ${companyId}`);
+
+  try {
+    const departments = await Department.findAll({
+      where: { company_id: companyId },
+      attributes: ['department_id', 'name']
+    });
+
+    console.log(`📁 Found ${departments.length} departments for company ${companyId}`);
+
+    const data = await Promise.all(departments.map(async (d) => {
+      const count = await Employee.count({ where: { department_id: d.department_id } });
+      console.log(`📌 Department: ${d.name}, Employees: ${count}`);
+      return { department: d.name, value: count };
+    }));
+
+    res.json(data);
+  } catch (err) {
+    console.error(`❌ Error in /employeesPerDepartment/${companyId}:`, err);
+    res.status(500).json({ error: 'Failed to fetch employee stats per department' });
+  }
+});
+
+
+router.get('/salariesPerDepartment/:companyId', async (req, res) => {
+  const { companyId } = req.params;
+  console.log(`💰 [SALARIES] Fetching salary totals per department for company ${companyId}`);
+
+  try {
+    const departments = await Department.findAll({
+      where: { company_id: companyId },
+      attributes: ['department_id', 'name']
+    });
+
+    console.log(`📁 Found ${departments.length} departments for company ${companyId}`);
+
+    const data = await Promise.all(departments.map(async (d) => {
+      const { sum } = await Employee.findOne({
+        where: { department_id: d.department_id },
+        attributes: [[Employee.sequelize.fn('SUM', Employee.sequelize.col('salary')), 'sum']],
+        raw: true
+      });
+
+      const parsedSum = parseFloat(sum) || 0;
+      console.log(`📌 Department: ${d.name}, Total Salaries: ${parsedSum}`);
+      return { department: d.name, value: parsedSum };
+    }));
+
+    res.json(data);
+  } catch (err) {
+    console.error(`❌ Error in /salariesPerDepartment/${companyId}:`, err);
+    res.status(500).json({ error: 'Failed to fetch salary stats per department' });
+  }
+});
+
 
 
 module.exports = router;
