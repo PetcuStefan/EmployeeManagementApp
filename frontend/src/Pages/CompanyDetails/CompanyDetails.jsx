@@ -189,8 +189,6 @@ const CompanyDetails = () => {
     <div className="company-details-container">
       <h1>{company.name}</h1>
       <p><strong>Start Date:</strong> {new Date(company.start_date).toLocaleDateString()}</p>
-      <p><strong>Created At:</strong> {new Date(company.createdAt).toLocaleString()}</p>
-      <p><strong>Google ID:</strong> {company.googleId}</p>
 
       <h2>Departments</h2>
       {company.Departments && company.Departments.length > 0 ? (

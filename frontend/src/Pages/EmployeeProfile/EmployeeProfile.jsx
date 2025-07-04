@@ -49,13 +49,15 @@ const EmployeeProfile = () => {
         const data = await res.json();
         setEmployee(data);
 
-        const today = new Date().toISOString().split('T')[0];
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const endDate = tomorrow.toISOString().split('T')[0];
         const hireDate = data.hire_date?.split('T')[0] || today;
 
         setGraphFilters(prev => ({
           ...prev,
           startDate: hireDate,
-          endDate: today,
+          endDate: endDate,
         }));
       } catch (err) {
         console.error('Error fetching employee:', err);
