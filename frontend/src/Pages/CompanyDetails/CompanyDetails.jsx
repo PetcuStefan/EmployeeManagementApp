@@ -190,7 +190,7 @@ const CompanyDetails = () => {
       <h1>{company.name}</h1>
       <p><strong>Start Date:</strong> {new Date(company.start_date).toLocaleDateString()}</p>
 
-      <h2>Departments</h2>
+      <h2 className='D2'>Departments</h2>
       {company.Departments && company.Departments.length > 0 ? (
         <ul className="departments-list">
           {company.Departments.map((dept) => (
