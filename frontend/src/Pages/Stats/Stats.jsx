@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChartPie} from 'lucide-react';
 import Modal from '../../Components/Modal/Modal';
 import {
   PieChart,
@@ -132,7 +132,8 @@ useEffect(() => {
                 className="company-item"
                 onClick={() => handleCompanyClick(c, 'employees')}
               >
-                <strong>{c.name}</strong>: {c.employeesCount} employee(s)
+                <span><strong>{c.name}</strong>: {c.employeesCount} employee(s)</span>
+                <ChartPie className="hover-icon" size={18} />
               </div>
             ))}
           </div>
@@ -157,7 +158,8 @@ useEffect(() => {
                 className="company-item"
                 onClick={() => handleCompanyClick(c, 'salaries')}
               >
-                <strong>{c.name}</strong>: {c.totalSalaries.toLocaleString()}
+                <span><strong>{c.name}</strong>: {c.totalSalaries.toLocaleString()}</span>
+                <ChartPie className="hover-icon" size={18} />
               </div>
             ))}
           </div>
