@@ -34,7 +34,6 @@
 
 .stat-block:hover {
   background-color: var(--green);
-  color: var(--white);
   transform: scale(1.02);
 }
 
@@ -55,28 +54,12 @@
   align-items: center;
 }
 
-/* existing styles */
-.stat-title.hoverable:hover {
-  background-color: var(--green);
-  color: var(--white);
-}
-
-
-.stat-title:hover {
-  background-color: var(--green);
-  color: var(--white);
-}
-
 .arrow-icon {
   margin-left: 12px;
   transition: transform 0.3s ease, color 0.3s ease;
   display: flex;
   align-items: center;
   color: var(--black); /* Default color */
-}
-
-.stat-title.hoverable:hover .arrow-icon {
-  color: var(--white); /* Turn white on hover */
 }
 
 .arrow-icon.open {
@@ -102,11 +85,5 @@
   font-size: 1.05rem;
   color: #1a1a1a;
   transition: background-color 0.3s, color 0.3s;
-}
-
-.company-item:hover {
-  background-color: var(--green);
-  color: var(--white);
-  cursor: default;
 }
 
