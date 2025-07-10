@@ -101,4 +101,96 @@
   transform: translateX(0);
 }
 
+/* Export Button Wrapper */
+.export-button-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.export-button {
+  background-color: var(--green);
+  color: white;
+  width:auto;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+}
+
+.export-button-content {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between icon and text */
+  font-weight: 600;
+}
+
+.export-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.export-button:hover {
+  background-color: #00a651; /* Slightly darker green */
+  transform: scale(1.05);
+}
+
+/* Modal Styles Override */
+.modal-content {
+  background-color: var(--list_elements);
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 450px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text_primary, #333);
+}
+
+.modal-content label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.company-dropdown {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--green);
+  background-color: white;
+  color: #333;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+}
+
+.company-dropdown:focus {
+  outline: none;
+  border-color: var(--green);
+  box-shadow: 0 0 5px var(--green);
+}
+
+.confirm-export-btn {
+  background-color: var(--green);
+  width:auto;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.confirm-export-btn:hover {
+  background-color: #00a651;
+  transform: scale(1.05);
+}
+
 

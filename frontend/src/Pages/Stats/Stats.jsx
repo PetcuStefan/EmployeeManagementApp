@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown, ChartPie} from 'lucide-react';
+import { ChevronDown, ChartPie, FileUp} from 'lucide-react';
 import Modal from '../../Components/Modal/Modal';
 import {
   PieChart,
@@ -236,11 +236,14 @@ useEffect(() => {
 )}
 
 <div className="export-button-wrapper">
-<button className="export-button" onClick={() => setExportModalOpen(true)}>
-  📤 Export Employees as Excel
-</button>
-
+  <button className="export-button" onClick={() => setExportModalOpen(true)}>
+    <span className="export-button-content">
+      <FileUp className="export-icon" />
+      Export as Excel
+    </span>
+  </button>
 </div>
+
 {exportModalOpen && (
   <Modal
     isOpen={true}
@@ -304,7 +307,7 @@ useEffect(() => {
           }
         }}
       >
-        ✅ Confirm Export
+        Export
       </button>
     </div>
   </Modal>
