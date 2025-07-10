@@ -26,6 +26,9 @@ const Stats = () => {
   const [expandedSection, setExpandedSection] = useState(null);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [modalSource, setModalSource] = useState(null); // 'employees' or 'salaries'
+  const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [exportCompanyId, setExportCompanyId] = useState(null);
+
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -104,9 +107,13 @@ useEffect(() => {
   const handleExport = async () => {
   try {
     const response = await fetch('http://localhost:5000/api/statsRoutes/export', {
-      method: 'GET',
-      credentials: 'include',
-    });
+  method: 'POST',
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ companyId: exportCompanyId }),
+});
 
     if (!response.ok) {
       throw new Error('Failed to export Excel');
@@ -229,10 +236,80 @@ useEffect(() => {
 )}
 
 <div className="export-button-wrapper">
-  <button className="export-button" onClick={handleExport}>
-    📤 Export Employees as Excel
-  </button>
+<button className="export-button" onClick={() => setExportModalOpen(true)}>
+  📤 Export Employees as Excel
+</button>
+
 </div>
+{exportModalOpen && (
+  <Modal
+    isOpen={true}
+    onClose={() => {
+      setExportModalOpen(false);
+      setExportCompanyId(null);
+    }}
+    title="Select a Company to Export"
+  >
+    <div>
+      <label htmlFor="company-select"><strong>Choose a company:</strong></label>
+      <select
+        id="company-select"
+        value={exportCompanyId ?? ''}
+        onChange={(e) => setExportCompanyId(e.target.value)}
+        className="company-dropdown"
+      >
+        <option value="" disabled>Select a company</option>
+        {stats.companies.map((c) => (
+          <option key={c.company_id} value={c.company_id}>
+            {c.name}
+          </option>
+        ))}
+      </select>
+
+      <button
+        className="confirm-export-btn"
+        onClick={async () => {
+          if (!exportCompanyId) {
+            alert('Please select a company first.');
+            return;
+          }
+
+          try {
+            const response = await fetch('http://localhost:5000/api/statsRoutes/export', {
+  method: 'POST',
+  credentials: 'include',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ companyId: exportCompanyId }),
+});
+
+            if (!response.ok) throw new Error('Failed to export company data.');
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'employees_by_company.xlsx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            setExportModalOpen(false);
+            setExportCompanyId(null);
+          } catch (err) {
+            console.error('Export failed:', err);
+            alert('Export failed. Try again.');
+          }
+        }}
+      >
+        ✅ Confirm Export
+      </button>
+    </div>
+  </Modal>
+)}
+
     </div>
   );
 };
