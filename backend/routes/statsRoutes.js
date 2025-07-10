@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const ExcelJS = require('exceljs');
 const { User, Company, Department, Employee } = require('../models');
 
 router.get('/countCompanies', async (req, res) => {
@@ -144,6 +145,66 @@ router.get('/salariesPerDepartment/:companyId', async (req, res) => {
   } catch (err) {
     console.error(`❌ Error in /salariesPerDepartment/${companyId}:`, err);
     res.status(500).json({ error: 'Failed to fetch salary stats per department' });
+  }
+});
+
+router.get('/export', async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Fetch employees related to user's companies, with joins
+    const companies = await Company.findAll({
+      where: { googleId: user.googleId },
+      include: {
+        model: Department,
+        include: {
+          model: Employee,
+        }
+      }
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Employees');
+
+    worksheet.columns = [
+      { header: 'Employee ID', key: 'id', width: 15 },
+      { header: 'Name', key: 'name', width: 30 },
+      { header: 'Department', key: 'department', width: 25 },
+      { header: 'Company', key: 'company', width: 25 },
+      { header: 'Salary', key: 'salary', width: 15 },
+    ];
+
+    companies.forEach(company => {
+      company.Departments.forEach(department => {
+        department.Employees.forEach(employee => {
+          worksheet.addRow({
+            id: employee.employee_id,
+            name: employee.name,
+            department: department.name,
+            company: company.name,
+            salary: employee.salary,
+          });
+        });
+      });
+    });
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=employees.xlsx'
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error('❌ Error exporting employees:', error);
+    res.status(500).json({ error: 'Failed to export employee data' });
   }
 });
 

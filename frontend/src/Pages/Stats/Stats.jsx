@@ -101,6 +101,33 @@ useEffect(() => {
   if (loading) return <p className="stats-container">Loading stats...</p>;
   if (error) return <p className="stats-container">{error}</p>;
 
+  const handleExport = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/statsRoutes/export', {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to export Excel');
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'employees.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('❌ Error exporting Excel:', error);
+    alert('Failed to export employees data.');
+  }
+};
+
   return (
     <div className="stats-container">
       <h1>Stats Dashboard</h1>
@@ -200,6 +227,12 @@ useEffect(() => {
     )}
   </Modal>
 )}
+
+<div className="export-button-wrapper">
+  <button className="export-button" onClick={handleExport}>
+    📤 Export Employees as Excel
+  </button>
+</div>
     </div>
   );
 };
