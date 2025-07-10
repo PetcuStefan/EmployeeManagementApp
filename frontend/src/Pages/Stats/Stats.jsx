@@ -277,6 +277,7 @@ useEffect(() => {
             return;
           }
 
+            console.log("📦 Attempting to export company ID:", exportCompanyId);
           try {
             const response = await fetch('http://localhost:5000/api/statsRoutes/export', {
   method: 'POST',
@@ -287,9 +288,12 @@ useEffect(() => {
   body: JSON.stringify({ companyId: exportCompanyId }),
 });
 
+    console.log("🟢 Export response status:", response.status);
+
             if (!response.ok) throw new Error('Failed to export company data.');
 
             const blob = await response.blob();
+                console.log("📄 Received Excel blob:", blob);
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;

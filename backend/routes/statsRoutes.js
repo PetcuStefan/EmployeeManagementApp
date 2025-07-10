@@ -136,73 +136,115 @@ router.get('/salariesPerDepartment/:companyId', async (req, res) => {
 });
 
 router.post('/export', async (req, res) => {
-  try {
-    const user = req.user;
     const { companyId } = req.body;
+  try {
+    console.log('📥 Export route hit');
 
+    const user = req.user;
     if (!user) {
+      console.log('❌ No user found in request');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    if (!companyId) {
-      return res.status(400).json({ error: 'companyId is required in request body' });
-    }
+    console.log(`👤 User authenticated: ${user.googleId}`);
 
-    // Fetch the specific company by ID and ensure it belongs to the user
-    const company = await Company.findOne({
-      where: {
-        company_id: companyId,
-        googleId: user.googleId, // Ensures user only accesses their own companies
-      },
-      include: {
-        model: Department,
-        include: Employee,
-      }
-    });
-
-    if (!company) {
-      return res.status(404).json({ error: 'Company not found or not authorized' });
-    }
-
-    const ExcelJS = require('exceljs');
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Employees');
-
-    worksheet.columns = [
-      { header: 'Employee ID', key: 'id', width: 15 },
-      { header: 'Name', key: 'name', width: 30 },
-      { header: 'Department', key: 'department', width: 25 },
-      { header: 'Salary', key: 'salary', width: 15 },
-    ];
-
-    company.Departments.forEach(department => {
-      department.Employees.forEach(employee => {
-        worksheet.addRow({
-          id: employee.employee_id,
-          name: employee.name,
-          department: department.name,
-          salary: employee.salary,
-        });
+      const company = await Company.findOne({
+        where: {
+          googleId: user.googleId,
+          company_id: companyId,
+        },
+        include: {
+          model: Department,
+          include: Employee,
+        },
       });
-    });
 
+      if (!company) {
+        console.log('⚠️ No matching company found');
+        return res.status(404).json({ error: 'Company not found' });
+      }
+
+    const workbook = new ExcelJS.Workbook();
+const summarySheet = workbook.addWorksheet('Company Summary');
+summarySheet.columns = [
+  { header: 'Company', key: 'company', width: 30 },
+  { header: 'Departments', key: 'departments', width: 20 },
+  { header: 'Employees', key: 'employees', width: 20 },
+  { header: 'Total Salaries', key: 'salaries', width: 20 },
+];
+
+let totalEmployees = 0;
+let totalSalaries = 0;
+
+company.Departments.forEach(dept => {
+  totalEmployees += dept.Employees.length;
+  totalSalaries += dept.Employees.reduce((sum, emp) => sum + emp.salary, 0);
+});
+
+console.log(`📊 Exporting:`, {
+  name: company.name,
+  departments: company.Departments.length,
+  employees: totalEmployees,
+  salaries: totalSalaries,
+});
+
+summarySheet.addRow({
+  company: company.name,
+  departments: company.Departments.length,
+  employees: totalEmployees,
+  salaries: totalSalaries,
+});
+
+summarySheet.addRow([]);
+summarySheet.addRow([`Generated At: ${new Date().toLocaleString()}`]);
+summarySheet.getRow(1).font = { bold: true };
+
+// Sheet 2: Details
+const detailSheet = workbook.addWorksheet('Employee Details');
+detailSheet.columns = [
+  { header: 'Employee ID', key: 'id', width: 15 },
+  { header: 'Name', key: 'name', width: 30 },
+  { header: 'Department', key: 'department', width: 25 },
+  { header: 'Salary', key: 'salary', width: 15 },
+];
+
+let rowCount = 0;
+
+company.Departments.forEach(dept => {
+  dept.Employees.forEach(emp => {
+    detailSheet.addRow({
+      id: emp.employee_id,
+      name: emp.name,
+      department: dept.name,
+      salary: emp.salary,
+    });
+    rowCount++;
+  });
+});
+
+detailSheet.getRow(1).font = { bold: true };
+console.log(`✅ Added ${rowCount} employee rows to Employee Details sheet`);
+
+    // Set headers
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     );
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename=employees_by_company.xlsx'
+      'attachment; filename=employees_export.xlsx'
     );
 
+    console.log('📤 Sending Excel file...');
     await workbook.xlsx.write(res);
     res.end();
+    console.log('✅ Excel file successfully sent.');
+
   } catch (error) {
     console.error('❌ Error exporting employees:', error);
     res.status(500).json({ error: 'Failed to export employee data' });
   }
 });
-
 
 
 module.exports = router;
