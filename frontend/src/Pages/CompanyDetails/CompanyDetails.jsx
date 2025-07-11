@@ -235,30 +235,21 @@ const { getRootProps, getInputProps, isDragActive } = useDropzone({
       <p><strong>Start Date:</strong> {new Date(company.start_date).toLocaleDateString()}</p>
 
       <div className="upload-section">
-  <h3>Upload Company Header (Antet)</h3>
-  <div
-    {...getRootProps()}
-    className={`dropzone ${isDragActive ? 'active' : ''}`}
-    style={{
-      border: '2px dashed #888',
-      padding: '20px',
-      borderRadius: '8px',
-      background: isDragActive ? '#f0f0f0' : '#fff',
-      cursor: 'pointer',
-      textAlign: 'center',
-      marginBottom: '1rem'
-    }}
-  >
-    <input {...getInputProps()} />
-    {
-      isDragActive
-        ? <p>Drop the image here...</p>
-        : <p>Drag & drop a header image here, or click to select one</p>
-    }
-  </div>
-  {uploading && <p>Uploading...</p>}
-  {uploadMessage && <p>{uploadMessage}</p>}
-</div>
+        <h3>Upload Company Header (Antet)</h3>
+        <div
+          {...getRootProps()}
+          className={`dropzone ${isDragActive ? 'active' : ''}`}
+        >
+          <input {...getInputProps()} />
+          {
+            isDragActive
+              ? <p>Drop the image here...</p>
+              : <p>Drag & drop a header image here, or click to select one</p>
+          }
+        </div>
+        {uploading && <p className="uploading">Uploading...</p>}
+        {uploadMessage && <p className="upload-message">{uploadMessage}</p>}
+      </div>
 
       <h2 className='D2'>Departments</h2>
       {company.Departments && company.Departments.length > 0 ? (

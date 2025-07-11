@@ -247,3 +247,32 @@ button[style*="background-color: red"]:hover {
     padding: 10px 20px; /* Consistent padding */
     font-size: 1rem;
 }
+
+.upload-section {
+  margin-bottom: 2rem;
+}
+
+.dropzone {
+  border: 2px dashed #888;
+  padding: 20px;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease-in-out;
+}
+
+.dropzone.active {
+  background: #f0f0f0;
+}
+
+.uploading {
+  font-style: italic;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.upload-message {
+  color: green;
+  margin-top: 0.5rem;
+}
