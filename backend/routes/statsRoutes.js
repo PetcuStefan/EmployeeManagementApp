@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const ExcelJS = require('exceljs');
+const fs = require('fs');
+const path = require('path');
 const { User, Company, Department, Employee } = require('../models');
 
 router.get('/countCompanies', async (req, res) => {
@@ -136,7 +138,8 @@ router.get('/salariesPerDepartment/:companyId', async (req, res) => {
 });
 
 router.post('/export', async (req, res) => {
-    const { companyId } = req.body;
+  const { companyId } = req.body;
+
   try {
     console.log('📥 Export route hit');
 
@@ -148,84 +151,137 @@ router.post('/export', async (req, res) => {
 
     console.log(`👤 User authenticated: ${user.googleId}`);
 
-      const company = await Company.findOne({
-        where: {
-          googleId: user.googleId,
-          company_id: companyId,
-        },
-        include: {
-          model: Department,
-          include: Employee,
-        },
-      });
+    const company = await Company.findOne({
+      where: {
+        googleId: user.googleId,
+        company_id: companyId,
+      },
+      include: {
+        model: Department,
+        include: Employee,
+      },
+    });
 
-      if (!company) {
-        console.log('⚠️ No matching company found');
-        return res.status(404).json({ error: 'Company not found' });
-      }
+    if (!company) {
+      console.log('⚠️ No matching company found');
+      return res.status(404).json({ error: 'Company not found' });
+    }
+
+    console.log(`🏢 Company found: ${company.name}`);
+    console.log(`🖼️ Header image path from DB: ${company.header_image_path}`);
 
     const workbook = new ExcelJS.Workbook();
-const summarySheet = workbook.addWorksheet('Company Summary');
-summarySheet.columns = [
-  { header: 'Company', key: 'company', width: 30 },
-  { header: 'Departments', key: 'departments', width: 20 },
-  { header: 'Employees', key: 'employees', width: 20 },
-  { header: 'Total Salaries', key: 'salaries', width: 20 },
-];
+    const summarySheet = workbook.addWorksheet('Company Summary');
 
-let totalEmployees = 0;
-let totalSalaries = 0;
+    // Initialize spacing variables
+    const imageHeight = 80;
+    const imageWidth = 500;
+    const imageRowSpan = Math.ceil(imageHeight / 20); // 6 rows for image height
+    const imageRowsReserved = imageRowSpan + 1; // 7 rows reserved for image
+    const spacerRows = 1; // 1 empty row between image and table
+    const headerRowNumber = imageRowsReserved + spacerRows + 1; // Row 9 for headers
+    const dataRowNumber = headerRowNumber + 1; // Row 10 for data
 
-company.Departments.forEach(dept => {
-  totalEmployees += dept.Employees.length;
-  totalSalaries += dept.Employees.reduce((sum, emp) => sum + emp.salary, 0);
-});
+    // 🖼️ Add header image if available
+    if (company.header_image_path) {
+      try {
+        const imagePath = path.resolve(company.header_image_path);
+        console.log('📁 Resolved image path:', imagePath);
 
-console.log(`📊 Exporting:`, {
-  name: company.name,
-  departments: company.Departments.length,
-  employees: totalEmployees,
-  salaries: totalSalaries,
-});
+        if (fs.existsSync(imagePath)) {
+          const ext = path.extname(imagePath).substring(1);
+          console.log(`🧩 Image file exists. Extension: .${ext}`);
+          console.log(`📐 Using hardcoded image size: ${imageWidth}x${imageHeight}`);
 
-summarySheet.addRow({
-  company: company.name,
-  departments: company.Departments.length,
-  employees: totalEmployees,
-  salaries: totalSalaries,
-});
+          const imageId = workbook.addImage({
+            filename: imagePath,
+            extension: ext,
+          });
 
-summarySheet.addRow([]);
-summarySheet.addRow([`Generated At: ${new Date().toLocaleString()}`]);
-summarySheet.getRow(1).font = { bold: true };
+          summarySheet.addImage(imageId, {
+            tl: { col: 0, row: 0 },
+            ext: { width: imageWidth, height: imageHeight },
+          });
 
-// Sheet 2: Details
-const detailSheet = workbook.addWorksheet('Employee Details');
-detailSheet.columns = [
-  { header: 'Employee ID', key: 'id', width: 15 },
-  { header: 'Name', key: 'name', width: 30 },
-  { header: 'Department', key: 'department', width: 25 },
-  { header: 'Salary', key: 'salary', width: 15 },
-];
+          console.log('✅ Image added to summary sheet');
 
-let rowCount = 0;
+          // Set row heights for image rows
+          for (let i = 1; i <= imageRowSpan; i++) {
+            summarySheet.getRow(i).height = 20;
+          }
+        } else {
+          console.warn('⚠️ Image file does NOT exist at path:', imagePath);
+        }
+      } catch (err) {
+        console.error('❌ Error adding header image:', err);
+      }
+    } else {
+      console.log('ℹ️ No header image path found for this company.');
+    }
 
-company.Departments.forEach(dept => {
-  dept.Employees.forEach(emp => {
-    detailSheet.addRow({
-      id: emp.employee_id,
-      name: emp.name,
-      department: dept.name,
-      salary: emp.salary,
+    // Add empty rows to reserve space for image and spacer
+    for (let i = 1; i <= imageRowsReserved + spacerRows; i++) {
+      summarySheet.getRow(i).values = [];
+    }
+
+    // Explicitly set header row
+    summarySheet.getRow(headerRowNumber).values = ['Company', 'Departments', 'Employees', 'Total Salaries'];
+    summarySheet.getRow(headerRowNumber).font = { bold: true };
+
+    // Define column widths
+    summarySheet.columns = [
+      { key: 'company', width: 30 },
+      { key: 'departments', width: 20 },
+      { key: 'employees', width: 20 },
+      { key: 'salaries', width: 20 },
+    ];
+
+    // Calculate totals
+    let totalEmployees = 0;
+    let totalSalaries = 0;
+    company.Departments.forEach(dept => {
+      totalEmployees += dept.Employees.length;
+      totalSalaries += dept.Employees.reduce((sum, emp) => sum + emp.salary, 0);
     });
-    rowCount++;
-  });
-});
 
-detailSheet.getRow(1).font = { bold: true };
-console.log(`✅ Added ${rowCount} employee rows to Employee Details sheet`);
+    // Add data row
+    summarySheet.getRow(dataRowNumber).values = {
+      company: company.name,
+      departments: company.Departments.length,
+      employees: totalEmployees,
+      salaries: totalSalaries,
+    };
 
-    // Set headers
+    // Add a blank row then footer text
+    summarySheet.getRow(dataRowNumber + 1).values = [];
+    summarySheet.getRow(dataRowNumber + 2).values = [`Generated At: ${new Date().toLocaleString()}`];
+
+    // 📋 Employee Details sheet
+    const detailSheet = workbook.addWorksheet('Employee Details');
+    detailSheet.columns = [
+      { header: 'Employee ID', key: 'id', width: 15 },
+      { header: 'Name', key: 'name', width: 30 },
+      { header: 'Department', key: 'department', width: 25 },
+      { header: 'Salary', key: 'salary', width: 15 },
+    ];
+
+    let rowCount = 0;
+    company.Departments.forEach(dept => {
+      dept.Employees.forEach(emp => {
+        detailSheet.addRow({
+          id: emp.employee_id,
+          name: emp.name,
+          department: dept.name,
+          salary: emp.salary,
+        });
+        rowCount++;
+      });
+    });
+
+    detailSheet.getRow(1).font = { bold: true };
+    console.log(`✅ Added ${rowCount} employee rows to Employee Details sheet`);
+
+    // 🔽 Send Excel file
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -237,7 +293,6 @@ console.log(`✅ Added ${rowCount} employee rows to Employee Details sheet`);
 
     console.log('📤 Sending Excel file...');
     await workbook.xlsx.write(res);
-    res.end();
     console.log('✅ Excel file successfully sent.');
 
   } catch (error) {
@@ -245,6 +300,5 @@ console.log(`✅ Added ${rowCount} employee rows to Employee Details sheet`);
     res.status(500).json({ error: 'Failed to export employee data' });
   }
 });
-
 
 module.exports = router;
