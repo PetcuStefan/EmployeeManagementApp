@@ -26,6 +26,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/uploads', express.static('uploads'));
+
 // Routes
 app.use("/auth", require("./routes/authRoutes"));
 app.use("/api/companies", require("./routes/companiesRoutes"));

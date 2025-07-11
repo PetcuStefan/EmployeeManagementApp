@@ -18,6 +18,10 @@ Company.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    header_image_path: {
+      type:DataTypes.STRING,
+      allowNull:true,
+    },
     start_date: {
       type: DataTypes.DATE,
       allowNull: false,

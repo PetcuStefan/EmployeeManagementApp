@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Modal from "../../Components/Modal/Modal";
+import { useDropzone } from 'react-dropzone';
 import './CompanyDetails.css';
 
 const CompanyDetails = () => {
@@ -21,6 +22,10 @@ const CompanyDetails = () => {
   const [supervisorId, setSupervisorId] = useState('');
   const [submittingEmployee, setSubmittingEmployee] = useState(false);
   const [currentDepartment, setCurrentDepartment] = useState(null);
+
+  const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
+
 
   const fetchCompanyDetails = async () => {
     try {
@@ -179,7 +184,46 @@ const CompanyDetails = () => {
       }
     }
   };
-  
+
+const onDrop = async (acceptedFiles) => {
+  const file = acceptedFiles[0];
+  const formData = new FormData();
+  formData.append('headerImage', file);
+
+  setUploading(true);
+  setUploadMessage('');
+
+  try {
+    const res = await fetch(`http://localhost:5000/api/CompanyDetails/upload-header`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+
+    const contentType = res.headers.get('content-type');
+
+    let result;
+    if (contentType && contentType.includes('application/json')) {
+      result = await res.json(); // ✅ safe to parse
+    } else {
+      result = await res.text(); // fallback
+    }
+
+    if (!res.ok) throw new Error(result.error || result || 'Upload failed');
+    setUploadMessage('✅ Header image uploaded successfully!');
+  } catch (err) {
+    console.error(err);
+    setUploadMessage('❌ Upload failed: ' + err.message);
+  } finally {
+    setUploading(false);
+  }
+};
+
+const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  onDrop,
+  accept: { 'image/*': [] },
+  maxFiles: 1,
+});
 
   if (loading) return <p>Loading company details...</p>;
   if (error) return <p>{error}</p>;
@@ -189,6 +233,32 @@ const CompanyDetails = () => {
     <div className="company-details-container">
       <h1>{company.name}</h1>
       <p><strong>Start Date:</strong> {new Date(company.start_date).toLocaleDateString()}</p>
+
+      <div className="upload-section">
+  <h3>Upload Company Header (Antet)</h3>
+  <div
+    {...getRootProps()}
+    className={`dropzone ${isDragActive ? 'active' : ''}`}
+    style={{
+      border: '2px dashed #888',
+      padding: '20px',
+      borderRadius: '8px',
+      background: isDragActive ? '#f0f0f0' : '#fff',
+      cursor: 'pointer',
+      textAlign: 'center',
+      marginBottom: '1rem'
+    }}
+  >
+    <input {...getInputProps()} />
+    {
+      isDragActive
+        ? <p>Drop the image here...</p>
+        : <p>Drag & drop a header image here, or click to select one</p>
+    }
+  </div>
+  {uploading && <p>Uploading...</p>}
+  {uploadMessage && <p>{uploadMessage}</p>}
+</div>
 
       <h2 className='D2'>Departments</h2>
       {company.Departments && company.Departments.length > 0 ? (

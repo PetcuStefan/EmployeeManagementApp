@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const upload = require('../config/upload');
 const { Company, Department, Employee, SalaryHistory, ManagerHistory } = require('../models');
 
 router.get('/:id', async (req, res) => {
@@ -184,6 +185,34 @@ router.delete('/:departmentId/deleteDepartment', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Error deleting department' });
+  }
+});
+
+router.post('/upload-header', upload.single('headerImage'), async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Find company by authenticated user's ID
+    const company = await Company.findOne({
+      where: { googleId: user.googleId },
+    });
+
+    if (!company) {
+      return res.status(404).json({ error: 'Company not found' });
+    }
+
+    const imagePath = req.file.path;
+    company.header_image_path = imagePath;
+    await company.save();
+
+    res.status(200).json({ message: 'Header uploaded', path: imagePath });
+  } catch (error) {
+    console.error('❌ Upload error:', error);
+    res.status(500).json({ error: 'Failed to upload header image' });
   }
 });
 
