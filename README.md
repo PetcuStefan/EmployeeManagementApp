@@ -1,6 +1,6 @@
 # EmployeeManagementApp
 
-This is my very first serious web application. This app is used for managing human resources. The backend is built with Node and the frontend is with React. 
+This app is used for managing human resources. The backend is built with Node and the frontend is with React. 
 For authentication and sessions the app uses a passport strategy for google authentication.
 ![DB_schema](screenshots/DB_schema.png)
 
